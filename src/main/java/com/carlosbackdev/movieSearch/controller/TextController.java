@@ -1,5 +1,4 @@
 
-
 package com.carlosbackdev.movieSearch.controller;
 
 import com.carlosbackdev.movieSearch.service.TextProcessingService;
@@ -13,7 +12,7 @@ public class TextController {
 
     @Autowired
     private TextProcessingService textProcessingService;
-
+    
     @PostMapping("/process")
     public ResponseEntity<?> processText(@RequestBody String phrase) {
         Object response = textProcessingService.processPhrase(phrase);

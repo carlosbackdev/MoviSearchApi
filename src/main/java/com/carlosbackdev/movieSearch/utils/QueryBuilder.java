@@ -6,8 +6,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 public class QueryBuilder {
-    public static String buildTMDBQuery(List<String> keywords, List<String> properNames, List<Integer> numbers) {
-        StringBuilder queryBuilder = new StringBuilder("?api_key=" + TMDB_API_KEY);
+    public static String buildTMDBQuery(List<String> keywords, List<String> properNames, List<Integer> numbers, String API_KEY) {
+        StringBuilder queryBuilder = new StringBuilder("?api_key=" + API_KEY);
         if (!keywords.isEmpty()) {
             queryBuilder.append("&with_keywords=").append(String.join(",", keywords));
         }
