@@ -50,7 +50,7 @@ public class GoogleTranslateService {
         int startIndex = input.indexOf(":") + 3; 
         int endIndex = input.lastIndexOf("\"");
         String extractedText = input.substring(startIndex, endIndex);
-        extractedText =extractedText.trim();
+        extractedText =extractedText.trim().toLowerCase();
         String cleanText = extractedText.replaceAll("[^a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\\s]", "");
 
         return cleanText;

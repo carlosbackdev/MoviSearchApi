@@ -31,7 +31,7 @@ public class TextProcessingService {
         // Paso 1: Corregir ortografía
         String correctedPhrase = textAnalysisUtils.correctSpelling(phrase);
         
-          //traducir frase
+          // Paso 2: traducir frase
          String translatedPhrase = null;
         try {
             translatedPhrase = googleTranslateService.translate(correctedPhrase, "en"); // Traducimos al inglés
@@ -41,16 +41,15 @@ public class TextProcessingService {
         }
         
         
-        // Paso 2: Extraer palabras clave
+        // Paso 3: Extraer palabras clave
         List<String> keywords = textAnalysisUtils.extractKeywords(translatedPhrase);
-        
+        System.out.println("Palabras clave extraídas: " + keywords);
       
-        // Paso 3: Extraer nombres propios
+        // Paso 4: Extraer nombres propios
         List<String> properNames = textAnalysisUtils.extractProperNames(translatedPhrase);
         
          // Paso 4: Obtener sinónimos y comparar con los géneros
         Set<Integer> detectedGenres = synonymService.compareWithGenres(keywords);
-         System.out.println("Palabras clave extraídas: " + keywords);
         List<String> genreIds = new ArrayList<>();
             for (Integer genreId : detectedGenres) {
                 genreIds.add(String.valueOf(genreId));

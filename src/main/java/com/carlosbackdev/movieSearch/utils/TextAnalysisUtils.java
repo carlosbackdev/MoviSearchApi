@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import com.carlosbackdev.movieSearch.text.Correcter;
+import com.carlosbackdev.movieSearch.text.KeywordExtractor;
 
 
 @Component
@@ -20,19 +21,8 @@ public class TextAnalysisUtils {
     }
 
     public List<String> extractKeywords(String phrase) {
-            // Implementar lógica para extraer palabras clave
-            List<String> keywords = new ArrayList<>();
-
-            // Asumimos que cada palabra es una palabra clave
-            String[] words = phrase.split(" ");
-
-            for (String word : words) {
-                // Agregar solo palabras con longitud mínima (por ejemplo, más de 2 caracteres)
-                if (word.length() > 2) {
-                    keywords.add(word.toLowerCase()); // Convertir todo a minúsculas para evitar duplicados
-                }
-            }
-
+        KeywordExtractor extractor = new KeywordExtractor();
+        List<String> keywords = extractor.extractKeywords(phrase);
             return keywords;
         }
     
