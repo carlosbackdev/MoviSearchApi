@@ -15,28 +15,28 @@ public class SynonymService {
     private static final Map<Integer, List<String>> genreKeywords = new HashMap<>();
 
     static {
-        genreKeywords.put(28, Arrays.asList("action", "fire", "gun", "power", "combat","war"
-            , "explosion", "hero", "adrenaline", "speed", "chase", "rescue", "mission", "fight", "struggle"
+        genreKeywords.put(28, Arrays.asList("action", "fire", "shot", "gun", "power", "combat","war"
+            , "explosion", "adrenaline", "speed", "chase", "rescue", "mission", "fight", "struggle"
             ,"weapon", "revenge", "explosive", "danger", "intense", "mercenary", "fighter"));
         genreKeywords.put(12, Arrays.asList("adventure", "escapade", "venture"
             , "journey", "expedition", "quest", "exploration", "trek", "treasure", "daring"
             ,"treasure-hunting", "island", "survival", "explorer", "risk", "heroic", "map","anything"));
         genreKeywords.put(16, Arrays.asList("animation", "anime", "cartoon","animated"
-            , "pixar", "disney", "family-friendly", "magic", "fantasy", "imaginative","ghibli","gibli"
+            , "pixar", "disney", "family-friendly", "magic", "fantasy", "imaginative"
             ,"colorful", "storytelling", "fantastic", "adventure", "fairytale", "childlike", "imaginative"));
-        genreKeywords.put(35, Arrays.asList("comedy", "fun", "funny","comical","humor","humorous","laugh","diverting","absurd","ridicolous"
-            , "hilarity", "satire", "parody", "joke", "laughable", "amusing", "entertainment"
-            ,"sarcasm", "slapstick", "hilarity", "quirky", "gags", "wit", "clumsy", "prank"));
+        genreKeywords.put(35, Arrays.asList("comedy", "fun","join", "funny","comical","humor","humorous","laugh","diverting","absurd","ridicolous"
+            , "hilarity", "satire", "parody", "joke","happy","happier", "laughable", "amusing", "entertainment"
+            ,"sarcasm", "slapstick", "hilarity", "quirky", "gags", "wit", "clumsy", "prank","meme"));
         genreKeywords.put(80, Arrays.asList("crime", "dead", "death","resolved","puzzle","police","investigate"
             , "detective", "heist", "robbery", "justice", "mafia", "criminal", "underworld", "law"
             ,"mystery", "undercover", "mobster", "theft", "gangster", "clue", "interrogation", "alibi"));
         genreKeywords.put(99, Arrays.asList("documentary", "documental", "animal","animals","real"
-            , "truth", "education", "informative", "real-life", "nature", "biography", "historical"
-            ,"interview", "analysis", "perspective", "insight", "study", "archive", "expose", "reporting"));
+            , "truth", "education", "informative", "real-life", "biography"
+            , "analysis", "perspective", "insight", "study", "archive", "expose", "reporting"));
         genreKeywords.put(18, Arrays.asList("drama", "dramatic", "intense","dram","excitement","furor","morbid"
             , "conflict", "relationships", "emotional", "realism", "tragedy", "character-driven"
-            ,"confession", "betrayal", "struggle", "adversity", "sacrifice", "realistic", "melancholy", "truth"
-            ,"cry","crying"));
+            ,"confession", "betrayal", "struggle", "adversity", "sacrifice", "realistic", "melancholy"
+            ,"cry","crying","life"));
         genreKeywords.put(10751, Arrays.asList("family","familiar", "company", "friend","friends","public","kid","child","son","parent","people"
             , "together", "bond", "happy", "support", "home", "children", "values", "fun","anything"
             ,"togetherness", "tradition", "fun-filled", "bonding", "parenthood", "siblings", "generation","nice"));
@@ -46,7 +46,7 @@ public class SynonymService {
         genreKeywords.put(36, Arrays.asList("history", "real", "true","events","chronicle", "heritage"
             , "legacy", "historical", "past", "era", "tradition"
             ,"ancient", "timeline", "epoch", "monument", "dynasty", "revolution", "archives", "memories"));
-        genreKeywords.put(27, Arrays.asList("horror", "aversion", "panic","revulsion","repulsion","abomination","fear","cruelity"
+        genreKeywords.put(27, Arrays.asList("horror","fear","demon","monster", "aversion", "panic","revulsion","repulsion","abomination","fear","cruelity"
             , "scary", "haunting", "darkness", "killer", "creepy", "evil", "nightmare", "chilling"
             ,"haunted", "curse", "scream", "terror", "paranormal", "sinister", "demonic", "blood"));
         genreKeywords.put(10402, Arrays.asList("music", "song", "musical","sing"
@@ -55,12 +55,12 @@ public class SynonymService {
         genreKeywords.put(9648, Arrays.asList("mystery", "discover", "trama","ocult","ghost","problem","puzzle","secret","enigma"
             , "clue", "unknown", "hidden", "fog", "curiosity", "plot", "suspense", "twist"
             ,"investigation", "trail", "whodunit", "dark", "puzzle", "hint", "interrogation", "conspiracy"));
-        genreKeywords.put(10770, Arrays.asList("romance", "romantic", "love", "darling","girlfriend","boyfriend","lovely","valentin","passion"
+        genreKeywords.put(10749, Arrays.asList("romance", "romantic", "love", "darling","girlfriend","boyfriend","lovely","valentin","passion"
             , "relationship", "kiss", "wedding", "heart", "crush", "soulmate", "desire"
             , "flirt", "romantic", "happiness", "bond", "affection", "longing", "spark", "heartfelt"
-            ,"cry","crying"));
+            ,"cry","crying","relationships","couple"));
         genreKeywords.put(878, Arrays.asList("science", "fiction", "sci","fi","sci-fy","scify","distopic","futurism","space","odyssey","epic"
-            , "robot", "alien", "future", "cyber", "high-tech", "innovation", "dystopia", "technology"
+            , "robot","inteligencia", "alien", "future", "cyber", "high-tech", "innovation", "dystopia", "technology"
             ,"spaceship", "quantum", "parallel", "simulation", "alien-life", "future-tech", "cosmic", "time-travel"));
         genreKeywords.put(10770, Arrays.asList("tv", "sofa", "couch","alone","bored","bad","normal","time","variate"
             ,"pilot", "streaming", "network", "viewer", "cliffhanger"));
@@ -114,7 +114,7 @@ public class SynonymService {
 
     private Set<String> getSynonyms(String word) {
         Set<String> synonyms = new HashSet<>();
-        String url = "https://api.datamuse.com/words?rel_syn=" + word + "&lang=es&max=5" ;
+        String url = "https://api.datamuse.com/words?rel_syn=" + word;
 
         String response = restTemplate.getForObject(url, String.class);
 

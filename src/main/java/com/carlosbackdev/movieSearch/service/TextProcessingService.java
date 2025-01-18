@@ -30,23 +30,34 @@ public class TextProcessingService {
     }
         // Paso 1: Corregir ortografía
         String correctedPhrase = textAnalysisUtils.correctSpelling(phrase);
+        System.out.println( correctedPhrase);
         
-          // Paso 2: traducir frase
-         String translatedPhrase = null;
+          // Paso 2: traducir frase corregida
+//         String translatedPhrase = null;
+//        try {
+//            translatedPhrase = googleTranslateService.translate(correctedPhrase, "en"); // Traducimos al inglés
+//            System.out.println("Frase traducida: " + translatedPhrase);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        
+        // Paso 2.1: traducir frase directamente sin corregir
+         String phraseEnglish = null;
         try {
-            translatedPhrase = googleTranslateService.translate(correctedPhrase, "en"); // Traducimos al inglés
-            System.out.println("Frase traducida: " + translatedPhrase);
+            phraseEnglish = googleTranslateService.translate(phrase, "en"); // Traducimos al inglés
+            System.out.println("Frase traducida sin corregir: " + phraseEnglish);
         } catch (Exception e) {
             e.printStackTrace();
         }
         
         
         // Paso 3: Extraer palabras clave
-        List<String> keywords = textAnalysisUtils.extractKeywords(translatedPhrase);
+        List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglish.toLowerCase());
         System.out.println("Palabras clave extraídas: " + keywords);
       
         // Paso 4: Extraer nombres propios
-        List<String> properNames = textAnalysisUtils.extractProperNames(translatedPhrase);
+        List<String> properNames = textAnalysisUtils.extractProperNames(phraseEnglish);
+        System.out.println("nombres propios: "+properNames);
         
          // Paso 4: Obtener sinónimos y comparar con los géneros
         Set<Integer> detectedGenres = synonymService.compareWithGenres(keywords);
@@ -55,11 +66,12 @@ public class TextProcessingService {
                 genreIds.add(String.valueOf(genreId));
             }
              System.out.println("Géneros detectados: " + detectedGenres);
+             
         // Paso 5: Extraer números
-        List<Integer> numbers =     textAnalysisUtils.extractNumbers(translatedPhrase);
+        List<Integer> numbers =     textAnalysisUtils.extractNumbers(phrase);
 
         // Retornar el resultado de TMDB
-        return tMDBService.fetchMovies(genreIds, properNames, numbers);
+        return tMDBService.fetchMovies(genreIds, properNames, numbers,keywords);
     }
 
 }

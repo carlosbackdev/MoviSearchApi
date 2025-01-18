@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import com.carlosbackdev.movieSearch.text.Correcter;
 import com.carlosbackdev.movieSearch.text.KeywordExtractor;
+import com.carlosbackdev.movieSearch.text.ProperNameExtractor;
 
 
 @Component
@@ -16,7 +17,6 @@ public class TextAnalysisUtils {
         }
         Correcter correcter=new Correcter();
         String fraseCorregida=correcter.corregir(phrase);
-        System.out.println( fraseCorregida);
         return fraseCorregida;
     }
 
@@ -28,8 +28,9 @@ public class TextAnalysisUtils {
     
 
     public List<String> extractProperNames(String phrase) {
-        // Implementar lógica para extraer nombres propios
-        return new ArrayList<>();
+        ProperNameExtractor extractor=new ProperNameExtractor();
+        List <String> person=extractor.extractProperNames(phrase);        
+        return person;
     }
 
     public List<Integer> extractNumbers(String phrase) {

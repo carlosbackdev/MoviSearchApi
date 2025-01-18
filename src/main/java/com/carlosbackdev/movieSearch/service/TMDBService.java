@@ -14,11 +14,11 @@ public class TMDBService {
     @Value("${tmdb.api.url}")
     private String API_URL;
 
-    public Object fetchMovies(List<String> keywords, List<String> properNames, List<Integer> numbers) {
+    public Object fetchMovies(List<String> genreIds, List<String> properNames, List<Integer> numbers,List<String> keywords) {
         try {
         // Llamar a la API de TMDB
         RestTemplate restTemplate = new RestTemplate();
-        String query = QueryBuilder.buildTMDBQuery(keywords, properNames, numbers,API_KEY);
+        String query = QueryBuilder.buildTMDBQuery(genreIds, properNames, numbers,API_KEY,keywords);
         String url = API_URL + query;
         return restTemplate.getForObject(url, Object.class);
     }catch (Exception e) {
