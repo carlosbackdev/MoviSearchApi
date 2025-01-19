@@ -65,13 +65,17 @@ public class TextProcessingService {
             for (Integer genreId : detectedGenres) {
                 genreIds.add(String.valueOf(genreId));
             }
-             System.out.println("Géneros detectados: " + detectedGenres);
+        System.out.println("Géneros detectados: " + detectedGenres);
              
         // Paso 5: Extraer números
-        List<Integer> numbers =     textAnalysisUtils.extractNumbers(phrase);
+        List<Integer> years = textAnalysisUtils.extractNumbers(phrase);
+        System.out.println("años detectados: " + years);
+        
+        //paso 6: Extraer Paises
+        List<String> country = textAnalysisUtils.extractCountry(phraseEnglish);
 
         // Retornar el resultado de TMDB
-        return tMDBService.fetchMovies(genreIds, properNames, numbers,keywords);
+        return tMDBService.fetchMovies(genreIds, properNames, years,keywords,country);
     }
 
 }

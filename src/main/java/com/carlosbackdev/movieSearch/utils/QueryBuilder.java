@@ -6,7 +6,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 public class QueryBuilder {
-    public static String buildTMDBQuery(List<String> genreIds, List<String> properNames, List<Integer> numbers, String API_KEY, List<String> keywords) {
+    public static String buildTMDBQuery(
+            List<String> genreIds, List<String> properNames, List<Integer> year,
+            String API_KEY, List<String> keywords,List<String> country ) {
+        
         StringBuilder queryBuilder = new StringBuilder("?api_key=" + API_KEY);
         if (!keywords.isEmpty()) {
             queryBuilder.append("&with_keywords=").append(String.join(",", keywords));
@@ -14,8 +17,8 @@ public class QueryBuilder {
         if (!properNames.isEmpty()) {
             queryBuilder.append("&with_people=").append(String.join(",", properNames));
         }
-        if (!numbers.isEmpty()) {
-            queryBuilder.append("&year=").append(numbers.get(0));
+        if (!year.isEmpty()) {
+            queryBuilder.append("&year=").append(year.get(0));
         }
         return queryBuilder.toString();
     }

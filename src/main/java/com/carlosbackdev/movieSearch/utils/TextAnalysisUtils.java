@@ -6,6 +6,7 @@ import java.util.List;
 import com.carlosbackdev.movieSearch.text.Correcter;
 import com.carlosbackdev.movieSearch.text.KeywordExtractor;
 import com.carlosbackdev.movieSearch.text.ProperNameExtractor;
+import com.carlosbackdev.movieSearch.text.NumberExtractor;
 
 
 @Component
@@ -34,7 +35,14 @@ public class TextAnalysisUtils {
     }
 
     public List<Integer> extractNumbers(String phrase) {
-        // Implementar lógica para extraer números
-        return new ArrayList<>();
+        NumberExtractor extractor=new NumberExtractor();
+        List <Integer> year=extractor.extractYears(phrase);
+        return year;
     }
+    
+    public List<String> extractCountry(String phrase){
+
+        return new ArrayList ();
+    }
+    
 }
