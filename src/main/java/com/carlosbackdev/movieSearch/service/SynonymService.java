@@ -82,8 +82,6 @@ public class SynonymService {
         Set<Integer> detectedGenres = new HashSet<>();
         
         for (String keyword : keywords) {
-            System.out.println("Procesando palabra clave: " + keyword);
-
             for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
                 for (String genreKeyword : entry.getValue()) {
                     if (genreKeyword.equalsIgnoreCase(keyword)) {
@@ -94,15 +92,11 @@ public class SynonymService {
             }
 
             Set<String> synonyms = getSynonyms(keyword);
-            
-             System.out.println("Sinónimos de '" + keyword + "': " + synonyms); 
 
             for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
                 for (String genreKeyword : entry.getValue()) {
                     if (synonyms.contains(genreKeyword)) {
                         detectedGenres.add(entry.getKey());
-                        
-                         System.out.println("Género encontrado (sinónimo): " + entry.getKey());
                         break;
                     }
                 }
@@ -132,7 +126,6 @@ public class SynonymService {
                 System.err.println("Error al procesar la respuesta JSON: " + e.getMessage());
             }
         }    
-    System.out.println("Sinónimos encontrados: " + synonyms);  
     return synonyms;
     }
 }

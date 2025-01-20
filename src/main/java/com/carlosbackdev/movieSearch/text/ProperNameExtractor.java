@@ -29,8 +29,6 @@ public class ProperNameExtractor {
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 String word = token.get(CoreAnnotations.TextAnnotation.class);
                 String ner = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-
-                System.out.println("Token: " + word + " | NER: " + ner);
                 if ("PERSON".equals(ner)) {
                                     properNames.add(word);
                                 } else {

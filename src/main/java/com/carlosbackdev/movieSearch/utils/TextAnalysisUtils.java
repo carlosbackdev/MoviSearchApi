@@ -7,6 +7,7 @@ import com.carlosbackdev.movieSearch.text.Correcter;
 import com.carlosbackdev.movieSearch.text.KeywordExtractor;
 import com.carlosbackdev.movieSearch.text.ProperNameExtractor;
 import com.carlosbackdev.movieSearch.text.NumberExtractor;
+import com.carlosbackdev.movieSearch.text.CountryExtractor;
 
 
 @Component
@@ -24,6 +25,7 @@ public class TextAnalysisUtils {
     public List<String> extractKeywords(String phrase) {
         KeywordExtractor extractor = new KeywordExtractor();
         List<String> keywords = extractor.extractKeywords(phrase);
+        keywords.removeIf(word -> word.matches(".*\\d.*"));
             return keywords;
         }
     
@@ -40,9 +42,10 @@ public class TextAnalysisUtils {
         return year;
     }
     
-    public List<String> extractCountry(String phrase){
-
-        return new ArrayList ();
+    public List<String> extractCountry(String phrase,List<String> properNames){
+        CountryExtractor extractor=new CountryExtractor();
+        List <String> country=extractor.extractCountry(phrase, properNames);
+        return country;
     }
     
 }

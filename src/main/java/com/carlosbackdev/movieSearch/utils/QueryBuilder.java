@@ -7,18 +7,34 @@ import java.util.*;
 
 public class QueryBuilder {
     public static String buildTMDBQuery(
-            List<String> genreIds, List<String> properNames, List<Integer> year,
+            String phrase, List<String> genreIds, List<String> properNames, List<Integer> year,
             String API_KEY, List<String> keywords,List<String> country ) {
         
         StringBuilder queryBuilder = new StringBuilder("?api_key=" + API_KEY);
-        if (!keywords.isEmpty()) {
-            queryBuilder.append("&with_keywords=").append(String.join(",", keywords));
+        if (!genreIds.isEmpty()) {
+            queryBuilder.append("&with_genres=").append(String.join(",", genreIds));
         }
         if (!properNames.isEmpty()) {
             queryBuilder.append("&with_people=").append(String.join(",", properNames));
         }
         if (!year.isEmpty()) {
-            queryBuilder.append("&year=").append(year.get(0));
+            StringBuilder yearsParam = new StringBuilder();
+            for (int i = 0; i < year.size(); i++) {
+               if (i > 0) {
+                   yearsParam.append(",");
+               }
+               yearsParam.append(year.get(i));
+            }
+            queryBuilder.append("&year=").append(yearsParam.toString());
+        }
+        if (!properNames.isEmpty()) {
+            queryBuilder.append("&with_cast=").append(String.join(",", properNames));
+        }
+        if (!country.isEmpty()) {
+            queryBuilder.append("&with_origin_country=").append(String.join(",", country));
+        }
+        if (!keywords.isEmpty()) {
+            queryBuilder.append("&with_keywords=").append(String.join(",", keywords));
         }
         return queryBuilder.toString();
     }

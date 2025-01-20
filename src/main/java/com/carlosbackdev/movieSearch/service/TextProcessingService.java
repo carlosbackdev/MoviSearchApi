@@ -42,10 +42,9 @@ public class TextProcessingService {
 //        }
         
         // Paso 2.1: traducir frase directamente sin corregir
-         String phraseEnglish = null;
+        String phraseEnglish = null;
         try {
             phraseEnglish = googleTranslateService.translate(phrase, "en"); // Traducimos al inglés
-            System.out.println("Frase traducida sin corregir: " + phraseEnglish);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,11 +52,14 @@ public class TextProcessingService {
         
         // Paso 3: Extraer palabras clave
         List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglish.toLowerCase());
-        System.out.println("Palabras clave extraídas: " + keywords);
       
         // Paso 4: Extraer nombres propios
         List<String> properNames = textAnalysisUtils.extractProperNames(phraseEnglish);
-        System.out.println("nombres propios: "+properNames);
+        
+        //depurar palabra clave quitando nombres de esta
+        for (String properName : properNames) {
+            keywords.removeIf(keyword -> keyword.equals(properName.toLowerCase()));
+        }
         
          // Paso 4: Obtener sinónimos y comparar con los géneros
         Set<Integer> detectedGenres = synonymService.compareWithGenres(keywords);
@@ -65,17 +67,37 @@ public class TextProcessingService {
             for (Integer genreId : detectedGenres) {
                 genreIds.add(String.valueOf(genreId));
             }
-        System.out.println("Géneros detectados: " + detectedGenres);
+        
              
         // Paso 5: Extraer números
         List<Integer> years = textAnalysisUtils.extractNumbers(phrase);
-        System.out.println("años detectados: " + years);
         
         //paso 6: Extraer Paises
-        List<String> country = textAnalysisUtils.extractCountry(phraseEnglish);
-
-        // Retornar el resultado de TMDB
-        return tMDBService.fetchMovies(genreIds, properNames, years,keywords,country);
+        List<String> country = textAnalysisUtils.extractCountry(phraseEnglish,properNames);
+        
+        System.out.println(phrase);
+        System.out.println("Frase traducida sin corregir: " + phraseEnglish);
+        System.out.println("Palabras clave extraídas: " + keywords);
+        System.out.println("nombres propios: "+properNames);
+        System.out.println("Géneros detectados: " + detectedGenres);
+        System.out.println("años detectados: " + years);
+        System.out.println("pais detectado: " + country);
+        
+        //PASO 7 DEBO OBTENER LOS NUMROS ID DE LOS NOMBRES 
+        if(!properNames.isEmpty()){
+            Object personIdResult = tMDBService.personId(properNames);
+        }
+        System.out.println("personas IDS: " + properNames);
+        
+        //PASO 9 OBTENER LOS NUMERO ID DE LA PALABRAS CLAVE
+        if(!properNames.isEmpty()){
+            Object keyeordsIdResult = tMDBService.keywordsId(keywords);
+        }
+        System.out.println("Keywords Ids: " + keywords);
+        
+        
+        return tMDBService.fetchMovies(phraseEnglish,genreIds, properNames, years,keywords,country);
     }
+
 
 }
