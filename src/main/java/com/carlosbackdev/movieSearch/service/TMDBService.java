@@ -111,15 +111,33 @@ public class TMDBService {
 
 
     public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year,List<String> keywords,List<String> country) {
-        try {
-        // Llamar a la API de TMDB
-        RestTemplate restTemplate = new RestTemplate();
+        OkHttpClient client = new OkHttpClient();
         String query = QueryBuilder.buildTMDBQuery(phrase,genreIds, properNames, year,API_KEY,keywords,country);
         String url = API_URL + query;
-        return restTemplate.getForObject(url, Object.class);
-    }catch (Exception e) {
-        // Manejar el error de forma adecuada
-        throw new RuntimeException("Error al consultar la API de TMDB", e);
-    }
+        System.out.println("consulta final" + url);
+        System.out.println("consulta final" + keywords);
+
+        Request request = new Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Accept", "application/json") 
+            .addHeader("Authorization", "Bearer " + API_KEY)
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                String responseBody = response.body().string();  
+                ObjectMapper objectMapper = new ObjectMapper();
+                
+                return objectMapper.readValue(responseBody, Object.class);
+            } else {
+
+                throw new RuntimeException("Error al consultar la API de TMDB");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al consultar la API de TMDB", e);
+        }
+                
   }
 }

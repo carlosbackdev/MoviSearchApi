@@ -10,7 +10,8 @@ public class QueryBuilder {
             String phrase, List<String> genreIds, List<String> properNames, List<Integer> year,
             String API_KEY, List<String> keywords,List<String> country ) {
         
-        StringBuilder queryBuilder = new StringBuilder("?api_key=" + API_KEY);
+        
+        StringBuilder queryBuilder = new StringBuilder("discover/movie?api_key=" + API_KEY);
         if (!genreIds.isEmpty()) {
             queryBuilder.append("&with_genres=").append(String.join(",", genreIds));
         }
@@ -27,14 +28,11 @@ public class QueryBuilder {
             }
             queryBuilder.append("&year=").append(yearsParam.toString());
         }
-        if (!properNames.isEmpty()) {
-            queryBuilder.append("&with_cast=").append(String.join(",", properNames));
-        }
         if (!country.isEmpty()) {
             queryBuilder.append("&with_origin_country=").append(String.join(",", country));
         }
         if (!keywords.isEmpty()) {
-            queryBuilder.append("&with_keywords=").append(String.join(",", keywords));
+            queryBuilder.append("&with_keywords=").append(String.join("|", keywords));
         }
         return queryBuilder.toString();
     }

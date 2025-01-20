@@ -12,8 +12,7 @@ import java.util.*;
 @Service
 public class SynonymService {
 
-    private static final Map<Integer, List<String>> genreKeywords = new HashMap<>();
-
+    public static final Map<Integer, List<String>> genreKeywords = new HashMap<>();
     static {
         genreKeywords.put(28, Arrays.asList("action", "fire", "shot", "gun", "power", "combat","war"
             , "explosion", "adrenaline", "speed", "chase", "rescue", "mission", "fight", "struggle"
@@ -127,5 +126,37 @@ public class SynonymService {
             }
         }    
     return synonyms;
+    }
+    
+    public void removeMatchedKeywords(List<String> keywords) {
+        Iterator<String> iterator = keywords.iterator();
+        while (iterator.hasNext()) {
+            String keyword = iterator.next();
+            boolean isMatched = false;            
+            for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
+                for (String genreKeyword : entry.getValue()) {
+                    if (genreKeyword.equalsIgnoreCase(keyword)) {
+                        isMatched = true;
+                        break;
+                    }
+                }
+
+                if (isMatched) {
+                    iterator.remove();
+                    break;
+                }
+                Set<String> synonyms = getSynonyms(keyword);
+                for (String genreKeyword : entry.getValue()) {
+                    if (synonyms.contains(genreKeyword)) {
+                        isMatched = true;
+                        break;
+                    }
+                }
+                if (isMatched) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 }

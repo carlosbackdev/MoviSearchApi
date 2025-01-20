@@ -4,6 +4,7 @@ package com.carlosbackdev.movieSearch.service;
 import com.carlosbackdev.movieSearch.service.SynonymService;
 import com.carlosbackdev.movieSearch.service.TMDBService;
 import com.carlosbackdev.movieSearch.utils.TextAnalysisUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -47,12 +48,11 @@ public class TextProcessingService {
             phraseEnglish = googleTranslateService.translate(phrase, "en"); // Traducimos al inglés
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        
+        }        
         
         // Paso 3: Extraer palabras clave
         List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglish.toLowerCase());
-      
+              System.out.println("Keywords con generos" + keywords);
         // Paso 4: Extraer nombres propios
         List<String> properNames = textAnalysisUtils.extractProperNames(phraseEnglish);
         
@@ -66,14 +66,28 @@ public class TextProcessingService {
         List<String> genreIds = new ArrayList<>();
             for (Integer genreId : detectedGenres) {
                 genreIds.add(String.valueOf(genreId));
-            }
-        
+            }        
              
         // Paso 5: Extraer números
         List<Integer> years = textAnalysisUtils.extractNumbers(phrase);
         
         //paso 6: Extraer Paises
         List<String> country = textAnalysisUtils.extractCountry(phraseEnglish,properNames);
+        
+        //PASO 7 DEBO OBTENER LOS NUMROS ID DE LOS NOMBRES 
+        if(!properNames.isEmpty()){
+            Object personIdResult = tMDBService.personId(properNames);
+        }
+        
+        //PASO 9 OBTENER LOS NUMERO ID DE LA PALABRAS CLAVE
+        //Depurar Keyword quitando los generos
+        synonymService.removeMatchedKeywords(keywords);
+        System.out.println("Keywords sin generos: " + keywords);
+        
+        if(!keywords.isEmpty()){
+            Object keywordsIdResult = tMDBService.keywordsId(keywords);
+        }
+        
         
         System.out.println(phrase);
         System.out.println("Frase traducida sin corregir: " + phraseEnglish);
@@ -82,22 +96,19 @@ public class TextProcessingService {
         System.out.println("Géneros detectados: " + detectedGenres);
         System.out.println("años detectados: " + years);
         System.out.println("pais detectado: " + country);
-        
-        //PASO 7 DEBO OBTENER LOS NUMROS ID DE LOS NOMBRES 
-        if(!properNames.isEmpty()){
-            Object personIdResult = tMDBService.personId(properNames);
-        }
         System.out.println("personas IDS: " + properNames);
-        
-        //PASO 9 OBTENER LOS NUMERO ID DE LA PALABRAS CLAVE
-        if(!properNames.isEmpty()){
-            Object keyeordsIdResult = tMDBService.keywordsId(keywords);
-        }
         System.out.println("Keywords Ids: " + keywords);
         
         
-        return tMDBService.fetchMovies(phraseEnglish,genreIds, properNames, years,keywords,country);
+        Object moviesData = tMDBService.fetchMovies(phraseEnglish, genreIds, properNames, years, keywords, country);   
+        ObjectMapper mapper = new ObjectMapper(); 
+        try {
+            String prettyResult = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(moviesData);
+            System.out.println("Resultado de fetchMovies (formato legible): " + prettyResult);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return moviesData;
     }
-
-
 }
