@@ -21,7 +21,8 @@ public class KeywordExtractor {
         "most", "other", "over", "same", "since", "some", "such", "through","when","many",
         "under", "until", "upon", "where", "while", "within", "without","some","our",
         "best", "worst", "better", "worse", "great", "top", "low", "high", "favorite",
-        "movie","movies","film","tv","serie","show","watch"
+        "movie","movies","film","tv","serie","show","watch","recomended","then","recommend",
+        "them","say","give","cacth","will","myself","something","anything","some","someone","lot"
     ));
 
     public List<String> extractKeywords(String phrase) {

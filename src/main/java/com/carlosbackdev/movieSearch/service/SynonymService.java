@@ -77,35 +77,74 @@ public class SynonymService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public Set<Integer> compareWithGenres(List<String> keywords) {
-        Set<Integer> detectedGenres = new HashSet<>();
-        
-        for (String keyword : keywords) {
-            for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
-                for (String genreKeyword : entry.getValue()) {
-                    if (genreKeyword.equalsIgnoreCase(keyword)) {
-                        detectedGenres.add(entry.getKey());
-                        break;
-                    }
-                }
-            }
-
-            Set<String> synonyms = getSynonyms(keyword);
-
-            for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
-                for (String genreKeyword : entry.getValue()) {
-                    if (synonyms.contains(genreKeyword)) {
-                        detectedGenres.add(entry.getKey());
-                        break;
-                    }
+public Set<Integer> compareWithGenres(List<String> keywords) {
+    Set<Integer> detectedGenres = new HashSet<>();
+    
+    for (String keyword : keywords) {
+        for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
+            for (String genreKeyword : entry.getValue()) {
+                if (matches(keyword, genreKeyword)) {
+                    detectedGenres.add(entry.getKey());
+                    break;
                 }
             }
         }
 
-        return detectedGenres;
+        Set<String> synonyms = getSynonyms(keyword);
+
+        for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
+            for (String genreKeyword : entry.getValue()) {
+                if (synonyms.stream().anyMatch(synonym -> matches(synonym, genreKeyword))) {
+                    detectedGenres.add(entry.getKey());
+                    break;
+                }
+            }
+        }
     }
 
-    private Set<String> getSynonyms(String word) {
+    return detectedGenres;
+}
+
+private boolean matches(String keyword, String genreKeyword) {
+    return keyword.equalsIgnoreCase(genreKeyword) || keyword.equalsIgnoreCase(genreKeyword + "s");
+}
+
+public void removeMatchedKeywords(List<String> keywords) {
+    Iterator<String> iterator = keywords.iterator();
+    while (iterator.hasNext()) {
+        String keyword = iterator.next();
+        boolean isMatched = false;            
+        for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
+            for (String genreKeyword : entry.getValue()) {
+                if (matches(keyword, genreKeyword)) {
+                    isMatched = true;
+                    break;
+                }
+            }
+
+            if (isMatched) {
+                iterator.remove();
+                break;
+            }
+
+            Set<String> synonyms = getSynonyms(keyword);
+            for (String genreKeyword : entry.getValue()) {
+                if (synonyms.stream().anyMatch(synonym -> matches(synonym, genreKeyword))) {
+                    isMatched = true;
+                    break;
+                }
+            }
+
+            if (isMatched) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+}
+
+    
+        private Set<String> getSynonyms(String word) {
         Set<String> synonyms = new HashSet<>();
         String url = "https://api.datamuse.com/words?rel_syn=" + word;
 
@@ -126,37 +165,5 @@ public class SynonymService {
             }
         }    
     return synonyms;
-    }
-    
-    public void removeMatchedKeywords(List<String> keywords) {
-        Iterator<String> iterator = keywords.iterator();
-        while (iterator.hasNext()) {
-            String keyword = iterator.next();
-            boolean isMatched = false;            
-            for (Map.Entry<Integer, List<String>> entry : genreKeywords.entrySet()) {
-                for (String genreKeyword : entry.getValue()) {
-                    if (genreKeyword.equalsIgnoreCase(keyword)) {
-                        isMatched = true;
-                        break;
-                    }
-                }
-
-                if (isMatched) {
-                    iterator.remove();
-                    break;
-                }
-                Set<String> synonyms = getSynonyms(keyword);
-                for (String genreKeyword : entry.getValue()) {
-                    if (synonyms.contains(genreKeyword)) {
-                        isMatched = true;
-                        break;
-                    }
-                }
-                if (isMatched) {
-                    iterator.remove();
-                    break;
-                }
-            }
-        }
     }
 }
