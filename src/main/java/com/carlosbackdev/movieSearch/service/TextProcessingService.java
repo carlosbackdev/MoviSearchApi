@@ -51,6 +51,7 @@ public class TextProcessingService {
             e.printStackTrace();
         }
         String phraseEnglishMinus=phraseEnglish.toLowerCase();
+        System.out.println("frase ingles" + phraseEnglishMinus);
         
         // Paso 3: Extraer palabras clave
         List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglishMinus);

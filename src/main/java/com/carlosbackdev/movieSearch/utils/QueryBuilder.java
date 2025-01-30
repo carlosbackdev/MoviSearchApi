@@ -26,7 +26,11 @@ public class QueryBuilder {
                }
                yearsParam.append(year.get(i));
             }
-            queryBuilder.append("&year=").append(yearsParam.toString());
+            if(media.equalsIgnoreCase("movie")){
+                queryBuilder.append("&year=").append(yearsParam.toString());
+            }else{
+                queryBuilder.append("&first_air_date_year=").append(yearsParam.toString());
+            }
         }
         if (!country.isEmpty()) {
             queryBuilder.append("&with_origin_country=").append(String.join(",", country));
