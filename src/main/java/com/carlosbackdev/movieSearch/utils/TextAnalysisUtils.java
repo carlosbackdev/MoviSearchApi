@@ -8,6 +8,7 @@ import com.carlosbackdev.movieSearch.text.KeywordExtractor;
 import com.carlosbackdev.movieSearch.text.ProperNameExtractor;
 import com.carlosbackdev.movieSearch.text.NumberExtractor;
 import com.carlosbackdev.movieSearch.text.CountryExtractor;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -46,6 +47,37 @@ public class TextAnalysisUtils {
         CountryExtractor extractor=new CountryExtractor();
         List <String> country=extractor.extractCountry(phrase, properNames);
         return country;
+    }
+        
+    public String determineMediaType(List<String> keywords) {
+        List<String> movieKeywords = List.of("movie", "film","motion","picture","movies","films","picures",
+                "motions","filme","filming","cine","cinema","cines","cinemas");        
+        List<String> tvKeywords = List.of("serie", "tv", "show","series","tvs","shows","sets","set");
+        String retorno="movie";
+        for (String keyword : keywords) {
+            if (tvKeywords.contains(keyword.toLowerCase())) {
+                return "tv"; 
+            }
+        }
+        for (String keyword : keywords) {
+            if (movieKeywords.contains(keyword.toLowerCase())) {
+                return "movie";
+            }
+        }
+        return retorno;
+    }
+    public List<String> filterKeywords(List<String> keywords, String mediaType) {
+        List<String> keywordsToRemove;
+
+        if (mediaType.equals("movie")) {
+            keywordsToRemove = List.of("movie", "film", "motion", "picture", "movies", "films", "pictures",
+                    "motions", "filme", "filming", "cine", "cinema", "cines", "cinemas");
+        } else {
+            keywordsToRemove = List.of("serie", "tv", "show", "series", "tvs", "shows", "sets", "set");
+        }
+        return keywords.stream()
+                .filter(keyword -> !keywordsToRemove.contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
     }
     
 }

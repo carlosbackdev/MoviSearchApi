@@ -3,20 +3,20 @@ package com.carlosbackdev.movieSearch.utils;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.util.stream.Collectors;
 import java.util.*;
 
 public class QueryBuilder {
     public static String buildTMDBQuery(
             String phrase, List<String> genreIds, List<String> properNames, List<Integer> year,
-            String API_KEY, List<String> keywords,List<String> country ) {
+            String API_KEY, List<String> keywords,List<String> country,String media ) {         
         
-        
-        StringBuilder queryBuilder = new StringBuilder("discover/movie?api_key=" + API_KEY);
+        StringBuilder queryBuilder = new StringBuilder("discover/"+ media +"?api_key=" + API_KEY);
         if (!genreIds.isEmpty()) {
             queryBuilder.append("&with_genres=").append(String.join(",", genreIds));
         }
         if (!properNames.isEmpty()) {
-            queryBuilder.append("&with_people=").append(String.join(",", properNames));
+            queryBuilder.append("&with_people=").append(String.join("|", properNames));
         }
         if (!year.isEmpty()) {
             StringBuilder yearsParam = new StringBuilder();
@@ -36,4 +36,5 @@ public class QueryBuilder {
         }
         return queryBuilder.toString();
     }
+    
 }

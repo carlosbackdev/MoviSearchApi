@@ -40,12 +40,11 @@ public class GoogleTranslateService {
 
         translatedText = StringEscapeUtils.unescapeHtml4(translatedText);
         String input = translatedText;   
-        int startIndex = input.indexOf(":") + 3; 
+        int startIndex = input.indexOf(":") + 2; 
         int endIndex = input.lastIndexOf("\"");
         String extractedText = input.substring(startIndex, endIndex);
         extractedText =extractedText.trim();
         String cleanText = extractedText.replaceAll("[^a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\\s]", "");
-
         return cleanText;
     }
 }

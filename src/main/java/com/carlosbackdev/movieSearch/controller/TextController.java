@@ -13,6 +13,7 @@ public class TextController {
     @Autowired
     private TextProcessingService textProcessingService;
     
+    @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/process")
     public ResponseEntity<?> processText(@RequestBody String phrase) {
         Object response = textProcessingService.processPhrase(phrase);

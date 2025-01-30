@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TextProcessingService {
@@ -31,7 +32,7 @@ public class TextProcessingService {
     }
         // Paso 1: Corregir ortografía
         String correctedPhrase = textAnalysisUtils.correctSpelling(phrase);
-        System.out.println( correctedPhrase);
+        System.out.println( "frase "+correctedPhrase);
         
           // Paso 2: traducir frase corregida
 //         String translatedPhrase = null;
@@ -48,18 +49,18 @@ public class TextProcessingService {
             phraseEnglish = googleTranslateService.translate(phrase, "en"); // Traducimos al inglés
         } catch (Exception e) {
             e.printStackTrace();
-        }        
+        }
+        String phraseEnglishMinus=phraseEnglish.toLowerCase();
         
         // Paso 3: Extraer palabras clave
-        List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglish.toLowerCase());
+        List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglishMinus);
               System.out.println("Keywords con generos" + keywords);
         // Paso 4: Extraer nombres propios
-        List<String> properNames = textAnalysisUtils.extractProperNames(phraseEnglish);
+        List<String> properNames = textAnalysisUtils.extractProperNames(correctedPhrase);
         
         //depurar palabra clave quitando nombres de esta
-        for (String properName : properNames) {
-            keywords.removeIf(keyword -> keyword.equals(properName.toLowerCase()));
-        }
+        keywords.removeIf(properNames::contains);
+        
         
          // Paso 4: Obtener sinónimos y comparar con los géneros
         Set<Integer> detectedGenres = synonymService.compareWithGenres(keywords);
@@ -78,7 +79,10 @@ public class TextProcessingService {
         if(!properNames.isEmpty()){
             Object personIdResult = tMDBService.personId(properNames);
         }
-        
+        //PASO 8 SACAR EL TIPO DE MEDIA
+        String media = textAnalysisUtils.determineMediaType(keywords);
+        keywords = textAnalysisUtils.filterKeywords(keywords, media);
+        System.out.println("Keywords sin media: " + keywords);
         //PASO 9 OBTENER LOS NUMERO ID DE LA PALABRAS CLAVE
         //Depurar Keyword quitando los generos
         synonymService.removeMatchedKeywords(keywords);
@@ -100,15 +104,16 @@ public class TextProcessingService {
         System.out.println("Keywords Ids: " + keywords);
         
         
-        Object moviesData = tMDBService.fetchMovies(phraseEnglish, genreIds, properNames, years, keywords, country);   
+        Object moviesData = tMDBService.fetchMovies(phraseEnglish, genreIds, properNames, years, keywords, country, media);   
         ObjectMapper mapper = new ObjectMapper(); 
         try {
             String prettyResult = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(moviesData);
             System.out.println("Resultado de fetchMovies (formato legible): " + prettyResult);
-            
+       
         } catch (Exception e) {
             e.printStackTrace();
         }
         return moviesData;
     }
+
 }

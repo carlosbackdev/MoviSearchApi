@@ -109,14 +109,13 @@ public class TMDBService {
         return keywordsIds;
     }
 
-public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country) {
+public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country,String media) {
     OkHttpClient client = new OkHttpClient();
-    String query = QueryBuilder.buildTMDBQuery(phrase, genreIds, properNames, year, API_KEY, keywords, country);
+    String query = QueryBuilder.buildTMDBQuery(phrase, genreIds, properNames, year, API_KEY, keywords, country, media);
     int totalPages = 0;
     int pageNumber = 1;
     String url = API_URL + query + "&page=" + pageNumber;
     System.out.println("Consulta final: " + url);
-    System.out.println("Consulta final con palabras clave: " + keywords);
 
     Request request = new Request.Builder()
         .url(url)
@@ -134,8 +133,8 @@ public Object fetchMovies(String phrase, List<String> genreIds, List<String> pro
             totalPages = (int) resultMap.get("total_pages");
 
             // Ahora, hacemos una consulta con una página aleatoria
-            if(totalPages>500){
-                totalPages=500;
+            if(totalPages>50){
+                totalPages=50;
             }
             int randomPage = (int) (Math.random() * totalPages) + 1; 
             String randomPageUrl = API_URL + query + "&page=" + randomPage;

@@ -21,8 +21,9 @@ public class ProperNameExtractor {
 
     public List<String> extractProperNames(String text) {
         List<String> properNames = new ArrayList<>();
-
-        Annotation document = new Annotation(text);
+        String extractedText = text.replaceAll(".*\"(.*?)\".*", "$1");
+        System.out.println("prueba de texto "+ extractedText);
+        Annotation document = new Annotation(extractedText);
         pipeline.annotate(document);
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
         for (CoreMap sentence : sentences) {
@@ -30,10 +31,10 @@ public class ProperNameExtractor {
                 String word = token.get(CoreAnnotations.TextAnnotation.class);
                 String ner = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
                 if ("PERSON".equals(ner)) {
-                                    properNames.add(word);
+                                    properNames.add(word.toLowerCase());
                                 } else {
-                                    if (isCapitalized(word)) {
-                                        properNames.add(word);
+                                    if (isCapitalized(word.toLowerCase())) {
+                                        properNames.add(word.toLowerCase());
                                     }
                                 }
                             }
