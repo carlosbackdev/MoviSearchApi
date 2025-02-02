@@ -1,17 +1,17 @@
-
 package com.carlosbackdev.movieSearch.service;
 
 import com.carlosbackdev.movieSearch.model.User;
 import com.carlosbackdev.movieSearch.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 @Service
-public class UserService implements UserDetailsService { // Implementa UserDetailsService
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -19,22 +19,33 @@ public class UserService implements UserDetailsService { // Implementa UserDetai
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // Implementación del método loadUserByUsername de UserDetailsService
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Busca el usuario por su nombre de usuario
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        // Convierte tu entidad User a UserDetails
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
+                .builder()
+                .username(user.getEmail())
                 .password(user.getPassword())
-                .authorities("USER") // Aquí puedes agregar roles si los tienes
+                .roles("USER")  // Aquí puedes agregar roles si los tienes
                 .build();
     }
 
+    // Método de autenticación para el login
+    public boolean authenticate(User user) {
+        User existingUser = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Verificar si la contraseña es correcta
+        return passwordEncoder.matches(user.getPassword(), existingUser.getPassword());
+    }
+
+    // Método para registrar un usuario
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 }
+
