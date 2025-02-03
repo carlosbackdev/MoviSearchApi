@@ -84,7 +84,6 @@ public class TextProcessingService {
         String media = textAnalysisUtils.determineMediaType(keywords);
         keywords = textAnalysisUtils.filterKeywords(keywords, media);
         System.out.println("Keywords sin media: " + keywords);
-        
         //PASO 9 OBTENER LOS NUMERO ID DE LA PALABRAS CLAVE
         //Depurar Keyword quitando los generos
         synonymService.removeMatchedKeywords(keywords);

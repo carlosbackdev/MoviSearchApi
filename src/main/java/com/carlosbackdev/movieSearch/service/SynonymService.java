@@ -29,7 +29,7 @@ public class SynonymService {
         genreKeywords.put(80, Arrays.asList("crime", "dead", "death","resolved","puzzle","police","investigate"
             , "detective", "heist", "robbery", "justice", "mafia", "criminal", "underworld", "law"
             ,"mystery", "undercover", "mobster", "theft", "gangster", "clue", "interrogation", "alibi"));
-        genreKeywords.put(99, Arrays.asList("documentary", "documental","real"
+        genreKeywords.put(99, Arrays.asList("documentary", "documental", "animal","animals","real"
             , "truth", "education", "informative", "real-life", "biography"
             , "analysis", "perspective", "insight", "study", "archive", "expose", "reporting"));
         genreKeywords.put(18, Arrays.asList("drama", "dramatic", "intense","dram","excitement","furor","morbid"
