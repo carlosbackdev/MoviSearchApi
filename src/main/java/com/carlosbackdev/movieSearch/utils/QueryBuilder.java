@@ -12,6 +12,9 @@ public class QueryBuilder {
             String API_KEY, List<String> keywords,List<String> country,String media ) {         
         
         StringBuilder queryBuilder = new StringBuilder("discover/"+ media +"?api_key=" + API_KEY);
+        
+        queryBuilder.append("&vote_average.gte=6");
+        
         if (!genreIds.isEmpty()) {
             queryBuilder.append("&with_genres=").append(String.join(",", genreIds));
         }

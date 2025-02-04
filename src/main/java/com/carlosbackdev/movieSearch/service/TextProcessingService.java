@@ -2,6 +2,7 @@
 package com.carlosbackdev.movieSearch.service;
 
 import com.carlosbackdev.movieSearch.service.SynonymService;
+import com.carlosbackdev.movieSearch.service.SynonymServiceTv;
 import com.carlosbackdev.movieSearch.service.TMDBService;
 import com.carlosbackdev.movieSearch.utils.TextAnalysisUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,9 @@ public class TextProcessingService {
     
     @Autowired
     private SynonymService synonymService;
+    
+    @Autowired
+    private SynonymServiceTv synonymServiceTv;
     
     @Autowired
     private TextAnalysisUtils textAnalysisUtils;
@@ -56,19 +60,36 @@ public class TextProcessingService {
         // Paso 3: Extraer palabras clave
         List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglishMinus);
               System.out.println("Keywords con generos" + keywords);
+              
         // Paso 4: Extraer nombres propios
         List<String> properNames = textAnalysisUtils.extractProperNames(correctedPhrase);
         
         //depurar palabra clave quitando nombres de esta
         keywords.removeIf(properNames::contains);
         
+        //Paso 5: Ver el media tipo (tv,movie)
+        String media = textAnalysisUtils.determineMediaType(keywords);
+        keywords = textAnalysisUtils.filterKeywords(keywords, media);
+        System.out.println("Keywords sin media: " + keywords);
         
-         // Paso 4: Obtener sinónimos y comparar con los géneros
-        Set<Integer> detectedGenres = synonymService.compareWithGenres(keywords);
-        List<String> genreIds = new ArrayList<>();
-            for (Integer genreId : detectedGenres) {
-                genreIds.add(String.valueOf(genreId));
-            }        
+        
+         // Paso 6: Obtener sinónimos y comparar con los géneros
+         //si es tv o movie diferentes generos
+         List<String> genreIds = new ArrayList<>();
+         if(media.equalsIgnoreCase("movie")){
+            Set<Integer> detectedGenres = synonymService.compareWithGenres(keywords);
+                for (Integer genreId : detectedGenres) {
+                    genreIds.add(String.valueOf(genreId));
+                    System.out.println("Géneros detectados: " + detectedGenres);
+                }             
+         }else{
+             Set<Integer> detectedGenres = synonymServiceTv.compareWithGenres(keywords);
+                for (Integer genreId : detectedGenres) {
+                    genreIds.add(String.valueOf(genreId));
+                    System.out.println("Géneros detectados: " + detectedGenres);
+                }    
+         }
+     
              
         // Paso 5: Extraer números
         List<Integer> years = textAnalysisUtils.extractNumbers(phrase);
@@ -80,10 +101,7 @@ public class TextProcessingService {
         if(!properNames.isEmpty()){
             Object personIdResult = tMDBService.personId(properNames);
         }
-        //PASO 8 SACAR EL TIPO DE MEDIA
-        String media = textAnalysisUtils.determineMediaType(keywords);
-        keywords = textAnalysisUtils.filterKeywords(keywords, media);
-        System.out.println("Keywords sin media: " + keywords);
+
         //PASO 9 OBTENER LOS NUMERO ID DE LA PALABRAS CLAVE
         //Depurar Keyword quitando los generos
         synonymService.removeMatchedKeywords(keywords);
@@ -98,7 +116,6 @@ public class TextProcessingService {
         System.out.println("Frase traducida sin corregir: " + phraseEnglish);
         System.out.println("Palabras clave extraídas: " + keywords);
         System.out.println("nombres propios: "+properNames);
-        System.out.println("Géneros detectados: " + detectedGenres);
         System.out.println("años detectados: " + years);
         System.out.println("pais detectado: " + country);
         System.out.println("personas IDS: " + properNames);
