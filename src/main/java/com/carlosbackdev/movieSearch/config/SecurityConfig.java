@@ -2,6 +2,7 @@ package com.carlosbackdev.movieSearch.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +21,8 @@ public class SecurityConfig {
             .cors().and() // Habilitar CORS
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() // Permitir acceso sin autenticación
+                .requestMatchers("/api/lists/**").permitAll() 
+                .requestMatchers(HttpMethod.DELETE, "/api/lists/delete").authenticated()
                 .requestMatchers("/api/text/process").permitAll()
                 .anyRequest().authenticated() // Proteger todos los demás endpoints
             );

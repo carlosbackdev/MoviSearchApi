@@ -49,7 +49,7 @@ public class AuthService {
                 .setSubject(email)
                 .claim("userId", userId.toString())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 600000)) 
+                .setExpiration(new Date(System.currentTimeMillis() + 10000000)) 
                 .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
                 .compact();
     }
