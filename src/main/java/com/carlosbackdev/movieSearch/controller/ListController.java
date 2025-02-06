@@ -1,6 +1,7 @@
 
 package com.carlosbackdev.movieSearch.controller;
 
+import com.carlosbackdev.movieSearch.dto.ListWithMoviesDTO;
 import com.carlosbackdev.movieSearch.model.ListEntity;
 import com.carlosbackdev.movieSearch.model.MovieList;
 import com.carlosbackdev.movieSearch.repository.ListRepository;
@@ -45,74 +46,91 @@ public class ListController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "Invalid token"));
         }
     }
+    @GetMapping("/movie")
+    public ResponseEntity<?> getMovieLists(@RequestHeader("Authorization") String token) {
+        try {
+            System.out.println("Authorization Header: " + token);
+            String secretKey = "mySecretKey";
+            Claims claims = Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(token.replace("Bearer ", "")) 
+                .getBody();
+
+            Long userId = Long.parseLong(claims.get("userId").toString());
+            List<ListWithMoviesDTO> userLists = listService.getMovieLists(userId);
+            return ResponseEntity.ok(userLists);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "Invalid token"));
+        }
+    }
     
-        @PostMapping("/create")
-        public ResponseEntity<?> createList(@RequestBody Map<String, String> request, @RequestHeader("Authorization") String token) {
-            try {
-                System.out.println("Authorization Header: " + token);
+    @PostMapping("/create")
+    public ResponseEntity<?> createList(@RequestBody Map<String, String> request, @RequestHeader("Authorization") String token) {
+        try {
+            System.out.println("Authorization Header: " + token);
 
-                // Elimina el prefijo "Bearer " del token
-                String jwtToken = token.replace("Bearer ", "");
-                System.out.println("JWT Token: " + jwtToken);
+            // Elimina el prefijo "Bearer " del token
+            String jwtToken = token.replace("Bearer ", "");
+            System.out.println("JWT Token: " + jwtToken);
+            // Desencripta el token
 
-                // Desencripta el token
-                String secretKey = "mySecretKey";
-                Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey.getBytes())
-                    .parseClaimsJws(jwtToken)
-                    .getBody();
+            String secretKey = "mySecretKey";
+            Claims claims = Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(jwtToken)
+                .getBody();
 
-                // Imprime todos los claims del token
-                System.out.println("Token Claims: " + claims);
+            // Imprime todos los claims del token
+            System.out.println("Token Claims: " + claims);
 
-                // Extrae el userId
-                Long userId = Long.parseLong(claims.get("userId").toString());
-                System.out.println("UserId from token: " + userId);
+            // Extrae el userId
+            Long userId = Long.parseLong(claims.get("userId").toString());
+            System.out.println("UserId from token: " + userId);
 
-                // Continúa con la lógica de negocio
-                String listName = request.get("name");
-                listService.createList(userId, listName);
-                return ResponseEntity.ok(Collections.singletonMap("message", "lista creada correctamente."));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.badRequest().body("Error al crear la lista.");
-            }
+            // Continúa con la lógica de negocio
+            String listName = request.get("name");
+            listService.createList(userId, listName);
+            return ResponseEntity.ok(Collections.singletonMap("message", "lista creada correctamente."));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Error al crear la lista.");
         }
+    }
         
-        @DeleteMapping("/delete")
-        public ResponseEntity<?> deleteList(
-                @RequestBody Map<String, String> request,
-                @RequestHeader("Authorization") String token) {
-            try {
-                System.out.println("Authorization Header: " + token);
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteList(
+            @RequestBody Map<String, String> request,
+            @RequestHeader("Authorization") String token) {
+        try {
+            System.out.println("Authorization Header: " + token);
 
-                // Extrae el userId desde el token
-                String jwtToken = token.replace("Bearer ", "");
-                String secretKey = "mySecretKey";
-                Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey.getBytes())
-                    .parseClaimsJws(jwtToken)
-                    .getBody();
+            // Extrae el userId desde el token
+            String jwtToken = token.replace("Bearer ", "");
+            String secretKey = "mySecretKey";
+            Claims claims = Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(jwtToken)
+                .getBody();
 
-                Long userId = Long.parseLong(claims.get("userId").toString());
+            Long userId = Long.parseLong(claims.get("userId").toString());
 
-                // Verifica que 'name' no sea nulo
-                String listName = request.get("name");
-                if (listName == null || listName.trim().isEmpty()) {
-                    return ResponseEntity.badRequest().body("El nombre de la lista es requerido.");
-                }
-
-                System.out.println("Lista a eliminar: " + listName);
-
-                // Llama al servicio para eliminar la lista
-                listService.deleteList(userId, listName);
-
-                return ResponseEntity.ok(Collections.singletonMap("message", "lista eliminada correctamente."));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al eliminar la lista.");
+            // Verifica que 'name' no sea nulo
+            String listName = request.get("name");
+            if (listName == null || listName.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("El nombre de la lista es requerido.");
             }
+
+            System.out.println("Lista a eliminar: " + listName);
+
+            // Llama al servicio para eliminar la lista
+            listService.deleteList(userId, listName);
+
+            return ResponseEntity.ok(Collections.singletonMap("message", "lista eliminada correctamente."));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al eliminar la lista.");
         }
+    }
 
 
     @PostMapping("/add-movie")

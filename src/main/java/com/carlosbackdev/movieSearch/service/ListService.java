@@ -1,12 +1,15 @@
 
 package com.carlosbackdev.movieSearch.service;
 
+import com.carlosbackdev.movieSearch.dto.ListWithMoviesDTO;
+import com.carlosbackdev.movieSearch.dto.MovieDTO;
 import com.carlosbackdev.movieSearch.model.ListEntity;
 import com.carlosbackdev.movieSearch.model.MovieList;
 import com.carlosbackdev.movieSearch.model.User;
 import com.carlosbackdev.movieSearch.repository.ListRepository;
 import com.carlosbackdev.movieSearch.repository.MovieRepository;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,22 @@ public class ListService {
 
     public List<ListEntity> getUserLists(Long userId) {
         return listRepository.findByUserId(userId);
+    }
+    
+    public List<ListWithMoviesDTO> getMovieLists(Long userId) {
+        List<ListEntity> userLists = listRepository.findByUserId(userId);
+
+        List<ListWithMoviesDTO> result = new ArrayList<>();
+        for (ListEntity list : userLists) {
+            List<MovieList> movies = movieRepository.findByList(list);
+            List<MovieDTO> movieDTOs = movies.stream()
+                .map(movie -> new MovieDTO(movie.getId(), movie.getMovieId()))
+                .collect(Collectors.toList());
+
+            result.add(new ListWithMoviesDTO(list.getId(), list.getName(), movieDTOs));
+        }
+
+        return result;
     }
 
 
