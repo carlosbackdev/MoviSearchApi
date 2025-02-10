@@ -11,6 +11,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/lists")
 public class ListController {
+    
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     @Autowired
     private ListService listService;
@@ -33,7 +37,6 @@ public class ListController {
     public ResponseEntity<?> getUserLists(@RequestHeader("Authorization") String token) {
         try {
             System.out.println("Authorization Header: " + token);
-            String secretKey = "mySecretKey";
             Claims claims = Jwts.parser()
                 .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token.replace("Bearer ", "")) 
@@ -49,8 +52,6 @@ public class ListController {
     @GetMapping("/movie")
     public ResponseEntity<?> getMovieLists(@RequestHeader("Authorization") String token) {
         try {
-            System.out.println("Authorization Header: " + token);
-            String secretKey = "mySecretKey";
             Claims claims = Jwts.parser()
                 .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token.replace("Bearer ", "")) 
@@ -74,7 +75,6 @@ public class ListController {
             System.out.println("JWT Token: " + jwtToken);
             // Desencripta el token
 
-            String secretKey = "mySecretKey";
             Claims claims = Jwts.parser()
                 .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(jwtToken)
@@ -101,12 +101,10 @@ public class ListController {
     public ResponseEntity<?> deleteList(
             @RequestBody Map<String, String> request,
             @RequestHeader("Authorization") String token) {
-        try {
-            System.out.println("Authorization Header: " + token);
+        try {;
 
             // Extrae el userId desde el token
             String jwtToken = token.replace("Bearer ", "");
-            String secretKey = "mySecretKey";
             Claims claims = Jwts.parser()
                 .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(jwtToken)
@@ -120,8 +118,6 @@ public class ListController {
                 return ResponseEntity.badRequest().body("El nombre de la lista es requerido.");
             }
 
-            System.out.println("Lista a eliminar: " + listName);
-
             // Llama al servicio para eliminar la lista
             listService.deleteList(userId, listName);
 
@@ -132,16 +128,50 @@ public class ListController {
         }
     }
 
+    @DeleteMapping("/delete/movie")
+    public ResponseEntity<?> deleteMovieFromList(
+            @RequestBody Map<String, Object> request,
+            @RequestHeader("Authorization") String token) {
+        try {
+
+            // Extrae el userId desde el token
+            String jwtToken = token.replace("Bearer ", "");
+            Claims claims = Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(jwtToken)
+                .getBody();
+
+            Long userId = Long.parseLong(claims.get("userId").toString());
+
+            // Extrae la listId y movieId del request
+            Long listId = Long.parseLong(request.get("listId").toString());
+            Long movieId = Long.parseLong(request.get("movieId").toString());
+
+            // Llama al servicio para eliminar la película de la lista
+            boolean deleted = listService.deleteMovieFromList(listId, movieId);
+
+            if (deleted) {
+                return ResponseEntity.ok(Collections.singletonMap("message", "Película eliminada correctamente."));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "La película no está en la lista."));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al eliminar la película.");
+        }
+    }
+
+    
+
 
     @PostMapping("/add-movie")
     public ResponseEntity<?> addMovieToList(@RequestBody Map<String, Object> request, @RequestHeader("Authorization") String token) {
         try {
             // Elimina el prefijo "Bearer " del token
             String jwtToken = token.replace("Bearer ", "");
-            System.out.println("JWT Token: " + jwtToken);
 
             // Desencripta el token
-            String secretKey = "mySecretKey";
             Claims claims = Jwts.parser()
                 .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(jwtToken)
@@ -149,7 +179,6 @@ public class ListController {
 
             // Extrae el userId
             Long userId = Long.parseLong(claims.get("userId").toString());
-            System.out.println("UserId from token: " + userId);
 
             // Obtén el nombre de la lista y el ID de la película del request
             String listName = (String) request.get("listName");
@@ -158,7 +187,12 @@ public class ListController {
             // Busca la lista por nombre y userId
             ListEntity list = listRepository.findByNameAndUserId(listName, userId)
                     .orElseThrow(() -> new RuntimeException("Lista no encontrada o no autorizado para acceder a ella"));
-
+            
+            boolean exists = movieRepository.existsByMovieIdAndList(movieId, list);
+            if (exists) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap("message", "La película ya está en la lista."));
+            }
+            
             // Lógica para añadir la película a la lista
             MovieList movie = new MovieList();
             movie.setMovieId(movieId);

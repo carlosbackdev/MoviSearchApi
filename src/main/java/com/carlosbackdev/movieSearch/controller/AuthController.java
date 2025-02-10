@@ -3,6 +3,7 @@ package com.carlosbackdev.movieSearch.controller;
 
 import com.carlosbackdev.movieSearch.model.User;
 import com.carlosbackdev.movieSearch.service.AuthService;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +27,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        String token = authService.login(user.getEmail(), user.getPassword());
-        if (token != null) {
-            return ResponseEntity.ok().body("{\"token\": \"" + token + "\"}");
+        Map<String, Object> loginResponse = authService.login(user.getEmail(), user.getPassword());
+        if (loginResponse != null) {
+            return ResponseEntity.ok(loginResponse); // Devuelve el Map con el token y el username
         } else {
             return ResponseEntity.badRequest().body("Invalid credentials");
         }

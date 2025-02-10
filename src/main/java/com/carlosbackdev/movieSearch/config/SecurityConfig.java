@@ -22,7 +22,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() // Permitir acceso sin autenticación
                 .requestMatchers("/api/lists/**").permitAll() 
+                .requestMatchers("/api/comments/**").permitAll() 
+                    .requestMatchers(HttpMethod.DELETE,"/api/delete/comment").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/lists/delete").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/lists/delete/movie").authenticated()
                 .requestMatchers("/api/text/process").permitAll()
                 .anyRequest().authenticated() // Proteger todos los demás endpoints
             );

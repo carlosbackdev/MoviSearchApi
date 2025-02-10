@@ -6,19 +6,17 @@ import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor; 
 
-
 @Entity
-@Table(name = "user") 
+@Table(name = "like_comments") 
 @Data
 @NoArgsConstructor
-public class User {
+public class LikeComment {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String username;
-    private String password;
-    private String email;
+    private long userId;
+    private long listId;
     @Temporal(TemporalType.DATE) 
     private Date date;
     
@@ -26,4 +24,5 @@ public class User {
     protected void onCreate() {
         this.date = new Date();
     }    
+    
 }

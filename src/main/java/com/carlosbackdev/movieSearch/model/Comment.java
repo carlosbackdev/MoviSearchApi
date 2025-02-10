@@ -8,17 +8,19 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "user") 
+@Table(name = "comments") 
 @Data
 @NoArgsConstructor
-public class User {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String username;
-    private String password;
-    private String email;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    private long movieId;
+    private String comment;
+    private int likesCount;
     @Temporal(TemporalType.DATE) 
     private Date date;
     

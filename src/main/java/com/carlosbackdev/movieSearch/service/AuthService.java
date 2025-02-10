@@ -10,22 +10,35 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class AuthService {
 
+    @Value("${jwt.secret}")
+    private String secretKey;
+    
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public String login(String email, String password) {
+    public Map<String, Object> login(String email, String password) {
         User user = userRepository.findByEmail(email);
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return generateToken(user.getId(),user.getEmail());
+            String token = generateToken(user.getId(), user.getEmail());
+
+            // Crear un Map para devolver el token y el username
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("username", user.getUsername());
+
+            return response;
         }
-        return null;
+        return null; // Retorna null si las credenciales son incorrectas
     }
 
     public User register(User user) {
@@ -44,7 +57,6 @@ public class AuthService {
     }
 
     private String generateToken(Long userId, String email) {
-        String secretKey = "mySecretKey"; // Cambia esto por una clave segura en producción
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId.toString())

@@ -70,4 +70,15 @@ public class ListService {
 
         movieRepository.save(movie);
     }
+    
+    public boolean deleteMovieFromList(Long listId, Long movieId) {
+        Optional<MovieList> movieToDelete = movieRepository.findByMovieIdAndListId(movieId, listId);
+
+        if (movieToDelete.isPresent()) {
+            movieRepository.delete(movieToDelete.get());
+            return true;
+        }
+        return false;
+    }
+
 }
