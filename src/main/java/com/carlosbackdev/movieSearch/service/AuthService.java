@@ -25,6 +25,29 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+     public User findUserByEmailOrFirebaseUid(String email, String firebaseUid) {
+        // Primero, intenta buscar por el email
+        User existingUser = userRepository.findByEmail(email);
+
+        if (existingUser != null) {
+            return existingUser;  // Si lo encontró, lo devuelve
+        }
+
+        // Si no lo encontró, intenta buscar por Firebase UID (si tienes ese campo en tu modelo)
+        existingUser = userRepository.findByFirebaseUid(firebaseUid);
+
+        return existingUser;  // Retorna el usuario o null si no existe
+    }
+
+    // Método para registrar un nuevo usuario con datos de Google
+    public User registerNewGoogleUser(String firebaseUid, String email, String username) {
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setUsername(username);
+        newUser.setFirebaseUid(firebaseUid);  // Guarda el UID de Firebase
+        return userRepository.save(newUser);   // Guarda el usuario y lo devuelve
+    }
 
     public Map<String, Object> login(String email, String password) {
         User user = userRepository.findByEmail(email);
@@ -56,7 +79,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    private String generateToken(Long userId, String email) {
+    public String generateToken(Long userId, String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId.toString())

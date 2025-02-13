@@ -44,7 +44,7 @@ public class SynonymServiceTv {
                 , "educational", "learning", "creative"
                 , "cartoon", "family-friendly", "innocent", "playful", "school"));
         genreKeywords.put(9648, Arrays.asList("mystery", "discover", "trama", "ocult"
-                , "ghost", "problem", "puzzle", "secret", "enigma", "clue", "unknown"
+                , "ghost", "problem","horror","terror", "puzzle", "secret", "enigma", "clue", "unknown"
                 , "hidden", "fog", "curiosity", "plot", "suspense", "twist", "investigation"
                 , "trail", "whodunit", "puzzle", "hint", "interrogation", "conspiracy"));
         genreKeywords.put(10763, Arrays.asList("news", "current", "events"
@@ -81,7 +81,7 @@ public class SynonymServiceTv {
     @Autowired
     private RestTemplate restTemplate;
 
-public Set<Integer> compareWithGenres(List<String> keywords) {
+public Set<Integer> compareWithGenresTv(List<String> keywords) {
     Set<Integer> detectedGenres = new HashSet<>();
     
     for (String keyword : keywords) {

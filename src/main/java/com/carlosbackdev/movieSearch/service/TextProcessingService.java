@@ -75,16 +75,17 @@ public class TextProcessingService {
         
          // Paso 6: Obtener sinónimos y comparar con los géneros
          //si es tv o movie diferentes generos
+         System.out.println("tipo de: " + media);
          List<String> genreIds = new ArrayList<>();
-         if(media.equalsIgnoreCase("movie")){
+         if("movie".equalsIgnoreCase(media != null ? media.trim() : "")){
             Set<Integer> detectedGenres = synonymService.compareWithGenres(keywords);
                 for (Integer genreId : detectedGenres) {
                     genreIds.add(String.valueOf(genreId));
                     System.out.println("Géneros detectados: " + detectedGenres);
                 }             
          }else{
-             Set<Integer> detectedGenres = synonymServiceTv.compareWithGenres(keywords);
-                for (Integer genreId : detectedGenres) {
+             Set<Integer> detectedGenres = synonymServiceTv.compareWithGenresTv(keywords);
+             for (Integer genreId : detectedGenres) {
                     genreIds.add(String.valueOf(genreId));
                     System.out.println("Géneros detectados: " + detectedGenres);
                 }    

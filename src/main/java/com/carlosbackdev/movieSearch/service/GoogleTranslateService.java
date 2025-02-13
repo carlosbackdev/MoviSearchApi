@@ -8,11 +8,14 @@ import java.net.URL;
 import java.net.URLEncoder;
 import org.json.JSONObject;
 import org.apache.commons.lang3.StringEscapeUtils; 
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class GoogleTranslateService {
 
-    private static final String API_KEY = "AIzaSyCcKma4Lh8I1TchgVbRAfVMM-IFxdtHhrk"; // Reemplaza con tu clave de API
+    @Value("${translation.key}")
+    private String API_KEY;
+
 
     public String translate(String text, String targetLanguage) throws Exception {
         String encodedText = URLEncoder.encode(text, "UTF-8");

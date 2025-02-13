@@ -21,6 +21,7 @@ public class User {
     private String email;
     @Temporal(TemporalType.DATE) 
     private Date date;
+    private String firebaseUid;
     
     @PrePersist
     protected void onCreate() {
