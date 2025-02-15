@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 
 @Service
@@ -45,7 +46,8 @@ public class AuthService {
         User newUser = new User();
         newUser.setEmail(email);
         newUser.setUsername(username);
-        newUser.setFirebaseUid(firebaseUid);  // Guarda el UID de Firebase
+        newUser.setFirebaseUid(firebaseUid);
+        newUser.setConfirm(true);
         return userRepository.save(newUser);   // Guarda el usuario y lo devuelve
     }
 
@@ -76,7 +78,20 @@ public class AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setConfirm(false);
         return userRepository.save(user);
+    }
+    
+    public String confirm(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+                
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setConfirm(true);
+            userRepository.save(user);
+            return "usuario registrado";
+        }
+        return null; 
     }
 
     public String generateToken(Long userId, String email) {

@@ -28,7 +28,7 @@ public class SynonymServiceTv {
         genreKeywords.put(80, Arrays.asList("crime", "dead", "death", "resolved"
                 ,"puzzle", "investigate", "detective", "heist", "robbery"
                 ,"justice", "criminal", "underworld", "law", "mystery", "undercover"
-                ,"mobster", "clue", "interrogation", "alibi"));
+                ,"mobster", "clue", "interrogation", "alibi","scary"));
         genreKeywords.put(99, Arrays.asList("documentary", "documental"
                 ,"real", "truth", "education", "informative", "real-life", "biography", "analysis"
                 ,"perspective", "insight", "study", "archive", "expose", "reporting"));

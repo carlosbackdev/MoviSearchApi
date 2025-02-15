@@ -22,6 +22,9 @@ public class User {
     @Temporal(TemporalType.DATE) 
     private Date date;
     private String firebaseUid;
+    @Column(name = "confirm") 
+    private boolean confirm;
+
     
     @PrePersist
     protected void onCreate() {

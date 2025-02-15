@@ -109,7 +109,7 @@ public class TMDBService {
         return keywordsIds;
     }
 
-public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country,String media) {
+public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country, String media) {
     OkHttpClient client = new OkHttpClient();
     String query = QueryBuilder.buildTMDBQuery(phrase, genreIds, properNames, year, API_KEY, keywords, country, media);
     int totalPages = 0;
@@ -132,12 +132,13 @@ public Object fetchMovies(String phrase, List<String> genreIds, List<String> pro
             Map<String, Object> resultMap = objectMapper.readValue(responseBody, Map.class);
             totalPages = (int) resultMap.get("total_pages");
 
-            // Ahora, hacemos una consulta con una página aleatoria
-            if(totalPages>50){
-                totalPages=50;
+            // Limitar a un máximo de 50 páginas
+            if (totalPages > 20) {
+                totalPages = 20;
             }
-            int randomPage = (int) (Math.random() * totalPages) + 1; 
-            String randomPageUrl = API_URL + query + "&page=" + randomPage;
+
+            int randomPage = (int) (Math.random() * totalPages) + 1;
+            String randomPageUrl = API_URL + query + "&page=" + randomPage+"&language=es-ES";
             System.out.println("Consulta con página aleatoria: " + randomPageUrl);
 
             Request randomPageRequest = new Request.Builder()
@@ -150,54 +151,7 @@ public Object fetchMovies(String phrase, List<String> genreIds, List<String> pro
             try (Response randomPageResponse = client.newCall(randomPageRequest).execute()) {
                 if (randomPageResponse.isSuccessful()) {
                     String randomPageResponseBody = randomPageResponse.body().string();
-                    Map<String, Object> randomPageResultMap = objectMapper.readValue(randomPageResponseBody, Map.class);
-
-                    List<Map<String, Object>> randomPageResults = (List<Map<String, Object>>) randomPageResultMap.get("results");
-
-                    for (Map<String, Object> item : randomPageResults) {
-                        Integer movieId = (Integer) item.get("id");
-                        String mediaType = (String) item.get("media_type");
-
-                        String randomPageTranslateUrl = API_URL + mediaType + "/" + movieId + "/translations?api_key=" + API_KEY;
-                        Request randomPageTranslateRequest = new Request.Builder()
-                            .url(randomPageTranslateUrl)
-                            .get()
-                            .addHeader("Accept", "application/json")
-                            .build();
-
-                        try (Response randomPageTranslateResponse = client.newCall(randomPageTranslateRequest).execute()) {
-                            if (randomPageTranslateResponse.isSuccessful()) {
-                                String randomPageTranslateResponseBody = randomPageTranslateResponse.body().string();
-                                Map<String, Object> translateData = objectMapper.readValue(randomPageTranslateResponseBody, Map.class);
-                                List<Map<String, Object>> translations = (List<Map<String, Object>>) translateData.get("translations");
-
-                                String translatedTitle = null;
-                                for (Map<String, Object> translation : translations) {
-                                    String iso = (String) translation.get("iso_639_1");
-                                    String countr = (String) translation.get("iso_3166_1");
-
-                                    if ("es".equals(iso) && translatedTitle == null) {
-                                        Map<String, String> data = (Map<String, String>) translation.get("data");
-                                        translatedTitle = data.get("title");
-                                    }
-
-                                    if ("es".equals(iso) && "MX".equals(country) && translatedTitle == null) {
-                                        Map<String, String> data = (Map<String, String>) translation.get("data");
-                                        translatedTitle = data.get("title");
-                                    }
-                                }
-                                
-                                if (translatedTitle != null) {
-                                    item.put("title", translatedTitle);
-                                }
-                            }
-                        }
-                    }
-
-             
-                    return randomPageResultMap;
-                    
-                    
+                    return objectMapper.readValue(randomPageResponseBody, Map.class);
                 } else {
                     throw new RuntimeException("Error al consultar la API de TMDB con la página aleatoria");
                 }
@@ -213,6 +167,7 @@ public Object fetchMovies(String phrase, List<String> genreIds, List<String> pro
         throw new RuntimeException("Error al consultar la API de TMDB", e);
     }
 }
+
 
 
 }
