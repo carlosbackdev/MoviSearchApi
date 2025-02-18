@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,9 +29,6 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
-
-    @Value("${firebase.credentials.path}")
-    private String firebaseCredentialsPath;
     
     @Value("${url.front}")
     private String urlAuth;
@@ -38,17 +36,23 @@ public class AuthController {
     @PostConstruct
     public void init() {
         try {
-            FileInputStream serviceAccount = new FileInputStream(firebaseCredentialsPath);
+            String firebaseCredentialsJson = System.getenv("FIREBASE_CREDENTIALS");
 
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
 
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options);
+            if (firebaseCredentialsJson != null) {
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(firebaseCredentialsJson.getBytes())))
+                        .build();
+
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options);
+                }
+            } else {
+                throw new RuntimeException("❌ ERROR: No se encontró la variable de entorno FIREBASE_CREDENTIALS");
             }
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("❌ ERROR al inicializar Firebase", e);
         }
     }
 

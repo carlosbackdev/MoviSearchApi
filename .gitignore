@@ -33,5 +33,3 @@ build/
 .vscode/
 
 # Ignorar el archivo de credenciales de Firebase
-/src/main/resources/firebase-credentials.json
-/src/main/resources/application.properties
