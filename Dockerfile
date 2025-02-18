@@ -3,22 +3,28 @@ FROM maven:3.9.4-eclipse-temurin-17-alpine AS build
 
 WORKDIR /app
 
-# Copiar todo el proyecto (no solo pom.xml) para evitar errores en dependencias
+# Copiar solo el archivo de configuración de Maven para optimizar caché
+COPY pom.xml .
+
+# Crear y usar una carpeta de caché para dependencias
+RUN mvn dependency:resolve dependency:go-offline
+
+# Copiar el resto del código fuente
 COPY . .
 
-# Resolver dependencias antes del build
-RUN mvn dependency:resolve && mvn clean package -DskipTests
+# Compilar la aplicación sin volver a descargar dependencias
+RUN mvn clean package -DskipTests
 
 # Etapa 2: Imagen ligera para ejecución
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copiar solo el JAR generado en la etapa anterior
+# Copiar el JAR generado en la etapa anterior
 COPY --from=build /app/target/*.jar app.jar
 
-# Exponer el puerto para Railway (usa la variable PORT)
+# Configurar el puerto correctamente para Railway
 EXPOSE 8080
 
-# Ejecutar la aplicación asegurando que use el puerto correcto
-ENTRYPOINT ["java", "-jar", "/app/app.jar", "--server.port=${PORT}"]
+# Asegurar que se use el puerto correcto
+ENTRYPOINT ["sh", "-c", "java -jar /app/app.jar --server.port=${PORT:-8080}"]
