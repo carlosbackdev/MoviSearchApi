@@ -21,7 +21,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Copiamos el archivo JAR generado en la etapa anterior
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/movieSearch-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # Exponemos el puerto de la aplicación
 EXPOSE 8080
