@@ -1,30 +1,24 @@
 # Etapa 1: Construcción de la aplicación
-FROM maven:3.9.4-eclipse-temurin-17 AS build
+FROM maven:3.9.4-eclipse-temurin-17-alpine AS build
 
-# Establecemos el directorio de trabajo
 WORKDIR /app
 
-# Copiamos el archivo pom.xml y descargamos las dependencias
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Copiar todo el proyecto (no solo pom.xml) para evitar errores en dependencias
+COPY . .
 
-# Copiamos el código fuente del proyecto
-COPY src /app/src
-
-# Construimos el proyecto con Maven
-RUN mvn clean package -DskipTests
+# Resolver dependencias antes del build
+RUN mvn dependency:resolve && mvn clean package -DskipTests
 
 # Etapa 2: Imagen ligera para ejecución
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jre-alpine
 
-# Establecemos el directorio de trabajo
 WORKDIR /app
 
-# Copiamos el archivo JAR generado en la etapa anterior
-COPY --from=build /app/target/movieSearch-0.0.1-SNAPSHOT.jar /app/app.jar
+# Copiar solo el JAR generado en la etapa anterior
+COPY --from=build /app/target/*.jar app.jar
 
-# Exponemos el puerto de la aplicación
-EXPOSE 8080
+# Exponer el puerto para Railway (usa la variable PORT)
+EXPOSE ${PORT}
 
-# Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Ejecutar la aplicación asegurando que use el puerto correcto
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--server.port=${PORT}"]
