@@ -15,6 +15,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 @Service
@@ -24,6 +25,9 @@ public class TMDBService {
     private String API_KEY;
     @Value("${tmdb.api.url}")
     private String API_URL;
+    
+    @Autowired
+    private ChatService chatService;
     
     public Object personId(List<String> properNames) {        
         OkHttpClient client = new OkHttpClient();
@@ -109,36 +113,46 @@ public class TMDBService {
         return keywordsIds;
     }
 
-public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country, String media) {
-    OkHttpClient client = new OkHttpClient();
-    String query = QueryBuilder.buildTMDBQuery(phrase, genreIds, properNames, year, API_KEY, keywords, country, media);
-    int totalPages = 0;
-    int pageNumber = 1;
-    String url = API_URL + query + "&page=" + pageNumber;
-    System.out.println("Consulta final: " + url);
+    public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country, String media) {
+        
+        if(genreIds.size()>3 || keywords.size()>20 || phrase.length()>100){
+            String queryIa=chatService.getNewQuery(phrase);
+                return fetchMoviesWithIA(queryIa);
+        }
+        
+        OkHttpClient client = new OkHttpClient();
+        String query = QueryBuilder.buildTMDBQuery(phrase, genreIds, properNames, year, API_KEY, keywords, country, media);
+        String url = API_URL + query + "&page=1"; 
+        
+        System.out.println("Consulta inicial: " + url);
 
-    Request request = new Request.Builder()
-        .url(url)
-        .get()
-        .addHeader("Accept", "application/json")
-        .addHeader("Authorization", "Bearer " + API_KEY)
-        .build();
+        Request request = new Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Bearer " + API_KEY)
+            .build();
 
-    try (Response response = client.newCall(request).execute()) {
-        if (response.isSuccessful()) {
-            String responseBody = response.body().string();
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            Map<String, Object> resultMap = objectMapper.readValue(responseBody, Map.class);
-            totalPages = (int) resultMap.get("total_pages");
-
-            // Limitar a un máximo de 50 páginas
-            if (totalPages > 20) {
-                totalPages = 20;
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {            
+                throw new RuntimeException("Error al consultar la API de TMDB: " + response.code());
             }
 
+            String responseBody = response.body().string();
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> resultMap = objectMapper.readValue(responseBody, Map.class);
+
+            int totalResults = (int) resultMap.getOrDefault("total_results", 0);
+            
+            if (totalResults < 3) {
+                System.out.println("No se encontraron películas, redirigiendo a otro proceso...");
+                String queryIa=chatService.getNewQuery(phrase);
+                return fetchMoviesWithIA(queryIa);
+            }
+
+            int totalPages = Math.min((int) resultMap.get("total_pages"), 20); // Máximo 20 páginas
             int randomPage = (int) (Math.random() * totalPages) + 1;
-            String randomPageUrl = API_URL + query + "&page=" + randomPage+"&language=es-ES";
+            String randomPageUrl = API_URL + query + "&page=" + randomPage + "&language=es-ES";
             System.out.println("Consulta con página aleatoria: " + randomPageUrl);
 
             Request randomPageRequest = new Request.Builder()
@@ -155,18 +169,37 @@ public Object fetchMovies(String phrase, List<String> genreIds, List<String> pro
                 } else {
                     throw new RuntimeException("Error al consultar la API de TMDB con la página aleatoria");
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Error al consultar la API de TMDB con la página aleatoria", e);
             }
-        } else {
-            throw new RuntimeException("Error al consultar la API de TMDB");
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
-        throw new RuntimeException("Error al consultar la API de TMDB", e);
-    }
+        } catch (IOException e) {
+            throw new RuntimeException("Error al consultar la API de TMDB", e);
+   }       
 }
+    private Object fetchMoviesWithIA(String queryIa) {
+        OkHttpClient client = new OkHttpClient();
+        String url = API_URL+queryIa; 
+        System.out.println("Consulta IA: " + url);
+
+        Request request = new Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Bearer " + API_KEY)
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new RuntimeException("Error al consultar la API de TMDB: " + response.code());
+            }
+
+            String responseBody = response.body().string();
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> resultMap = objectMapper.readValue(responseBody, Map.class);
+
+            return resultMap; 
+        } catch (IOException e) {
+            throw new RuntimeException("Error al consultar la API de TMDB", e);
+        }
+    }
 
 
 

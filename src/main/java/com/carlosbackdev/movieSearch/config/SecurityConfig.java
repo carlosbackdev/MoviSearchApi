@@ -22,6 +22,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() // Permitir acceso sin autenticación
                 .requestMatchers("/api/lists/**").permitAll()
+                    .requestMatchers("/api/form/**").permitAll()
                 .requestMatchers("/api/chatbot/**").permitAll() 
                 .requestMatchers("/api/comments/**").permitAll() 
                 .requestMatchers(HttpMethod.DELETE,"/api/delete/comment").authenticated()
