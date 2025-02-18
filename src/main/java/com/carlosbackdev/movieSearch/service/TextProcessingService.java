@@ -34,10 +34,10 @@ public class TextProcessingService {
          if (phrase == null || phrase.trim().isEmpty()) {
         throw new IllegalArgumentException("La frase no puede estar vacía");
     }
-        // Paso 1: Corregir ortografía
-        String correctedPhrase = textAnalysisUtils.correctSpelling(phrase);
-        System.out.println( "frase "+correctedPhrase);
-        
+        // Paso 1: Corregir ortografía de momento no puede consumir mucho
+//        String correctedPhrase = textAnalysisUtils.correctSpelling(phrase);
+//        System.out.println( "frase "+correctedPhrase);
+//        
           // Paso 2: traducir frase corregida
 //         String translatedPhrase = null;
 //        try {
@@ -61,8 +61,8 @@ public class TextProcessingService {
         List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglishMinus);
               System.out.println("Keywords con generos" + keywords);
               
-        // Paso 4: Extraer nombres propios
-        List<String> properNames = textAnalysisUtils.extractProperNames(correctedPhrase);
+        // Paso 4: Extraer nombres propios solo con capazitador pues consumemucho nlp ademas al traducirla vienen ya capitalizas
+        List<String> properNames = textAnalysisUtils.extractProperNames(phraseEnglish);
         
         //depurar palabra clave quitando nombres de esta
         keywords.removeIf(properNames::contains);

@@ -70,17 +70,10 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-                        <dependency>
-                    <groupId>org.languagetool</groupId>
-                    <artifactId>languagetool-core</artifactId>
-                    <version>6.5</version>
-                    <type>jar</type>
-                </dependency>
                 <dependency>
-                    <groupId>org.languagetool</groupId>
-                    <artifactId>language-es</artifactId>
-                    <version>6.5</version>
-                    <type>jar</type>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                    <version>20211205</version> <!-- Verifica la última versión disponible -->
                 </dependency>
                 <dependency>
                     <groupId>org.apache.commons</groupId>
@@ -91,12 +84,6 @@
                     <groupId>edu.stanford.nlp</groupId>
                     <artifactId>stanford-corenlp</artifactId>
                     <version>4.5.4</version>
-                </dependency>
-                <dependency>
-                    <groupId>edu.stanford.nlp</groupId>
-                    <artifactId>stanford-corenlp</artifactId>
-                    <version>4.5.4</version>
-                    <classifier>models</classifier>
                 </dependency>
                 <dependency>
                     <groupId>javax.xml.bind</groupId>
