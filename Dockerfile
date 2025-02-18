@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Exponer el puerto para Railway (usa la variable PORT)
-EXPOSE ${PORT}
+EXPOSE 8080
 
 # Ejecutar la aplicación asegurando que use el puerto correcto
 ENTRYPOINT ["java", "-jar", "/app/app.jar", "--server.port=${PORT}"]
