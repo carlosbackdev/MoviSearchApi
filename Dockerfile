@@ -4,16 +4,16 @@ FROM maven:3.9.4-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
 # Copiar solo el archivo de configuración de Maven para optimizar caché
-COPY pom.xml .
+COPY pom.xml ./
 
 # Crear y usar una carpeta de caché para dependencias
 RUN mvn dependency:resolve dependency:go-offline
 
 # Copiar el resto del código fuente
-COPY . .
+COPY . ./
 
 # Compilar la aplicación sin volver a descargar dependencias
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -X
 
 # Etapa 2: Imagen ligera para ejecución
 FROM eclipse-temurin:21-jre-alpine
