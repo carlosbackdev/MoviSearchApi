@@ -13,6 +13,7 @@ import jakarta.mail.MessagingException;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,26 +37,36 @@ public class AuthController {
     @PostConstruct
     public void init() {
         try {
-            // Obtener el JSON desde la variable de entorno
-            String firebaseCredentialsJson = System.getenv("FIREBASE_CREDENTIALS");
-
-            if (firebaseCredentialsJson == null || firebaseCredentialsJson.isEmpty()) {
-                throw new RuntimeException("No se encontró la variable de entorno FIREBASE_CREDENTIALS");
+            // Leer credenciales desde la variable de entorno
+            String firebaseCredentials = System.getenv("FIREBASE_CREDENTIALS");
+            
+            if (firebaseCredentials == null || firebaseCredentials.isEmpty()) {
+                throw new IllegalStateException("❌ No se encontró la variable de entorno FIREBASE_CREDENTIALS");
             }
+            
+            System.out.println("🔍 Credenciales Firebase encontradas, inicializando...");
+            
+            // Convertir la cadena JSON en un InputStream
+            ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseCredentials.getBytes(StandardCharsets.UTF_8));
 
-            FileInputStream serviceAccount = new FileInputStream(firebaseCredentialsJson);
-
+            // Configurar Firebase
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
 
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
+                System.out.println("✅ Firebase inicializado correctamente.");
+            } else {
+                System.out.println("⚠️ Firebase ya estaba inicializado.");
             }
+
         } catch (IOException e) {
+            System.err.println("❌ Error al inicializar Firebase: " + e.getMessage());
             e.printStackTrace();
         }
     }
+    
 
 
     @PostMapping("/register")
