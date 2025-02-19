@@ -46,7 +46,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Aplicar a todos los endpoints
-                    .allowedOrigins("http://localhost:4200", "http://movisearchapi-production.up.railway.app","https://moviesearchia.netlify.app","https://movisearchapi-production.up.railway.app") // Permitir solicitudes desde este origen
+                    .allowedOrigins("http://localhost:4200", "https://moviesearchia.netlify.app","https://movisearchapi-production.up.railway.app") // Permitir solicitudes desde este origen
                     .allowedMethods("*") // Métodos permitidos
                     .allowedHeaders("*") // Permitir todos los encabezados
                     .allowCredentials(true); // Permitir credenciales (cookies, tokens)
