@@ -33,24 +33,30 @@ public class AuthController {
     @Value("${url.front}")
     private String urlAuth;
     
-    @Value("${firebase.credentials.path}")
-    private String firebaseCredentialsPath;
-
     @PostConstruct
     public void init() {
         try {
-                  FileInputStream serviceAccount = new FileInputStream(firebaseCredentialsPath);
-                  FirebaseOptions options = new FirebaseOptions.Builder()
-                          .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                          .build();
-                  if (FirebaseApp.getApps().isEmpty()) {
-                      FirebaseApp.initializeApp(options);
-                  }
-              } catch (IOException e) {
-                  e.printStackTrace();
-                  // Maneja el error, si el archivo no se encuentra o hay problemas con la inicialización.
-              }
+            // Obtener el JSON desde la variable de entorno
+            String firebaseCredentialsJson = System.getenv("FIREBASE_CREDENTIALS");
+
+            if (firebaseCredentialsJson == null || firebaseCredentialsJson.isEmpty()) {
+                throw new RuntimeException("No se encontró la variable de entorno FIREBASE_CREDENTIALS");
+            }
+
+            FileInputStream serviceAccount = new FileInputStream(firebaseCredentialsJson);
+
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
