@@ -115,7 +115,7 @@ public class TMDBService {
 
     public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country, String media) {
         
-        if(genreIds.size()>3 || keywords.size()>30 || phrase.length()>75){
+        if(genreIds.size()>2 || keywords.size()>25 || phrase.length()>50){
             String queryIa=chatService.getNewQuery(phrase);
                 return fetchMoviesWithIA(queryIa);
         }
