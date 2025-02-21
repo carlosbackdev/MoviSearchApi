@@ -150,7 +150,7 @@ public class TMDBService {
                 return fetchMoviesWithIA(queryIa);
             }
 
-            int totalPages = Math.min((int) resultMap.get("total_pages"), 30); // Máximo 20 páginas
+            int totalPages = Math.min((int) resultMap.get("total_pages"), 15); // Máximo 15
             int randomPage = (int) (Math.random() * totalPages) + 1;
             String randomPageUrl = API_URL + query + "&page=" + randomPage + "&language=es-ES";
             System.out.println("Consulta con página aleatoria: " + randomPageUrl);
