@@ -144,7 +144,7 @@ public class TMDBService {
 
             int totalResults = (int) resultMap.getOrDefault("total_results", 0);
             
-            if (totalResults < 3) {
+            if (totalResults < 5) {
                 System.out.println("No se encontraron películas, redirigiendo a otro proceso...");
                 String queryIa=chatService.getNewQuery(phrase);
                 return fetchMoviesWithIA(queryIa);
