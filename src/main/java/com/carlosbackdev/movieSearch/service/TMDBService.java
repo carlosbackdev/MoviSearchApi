@@ -176,7 +176,7 @@ public class TMDBService {
 }
     private Object fetchMoviesWithIA(String queryIa) {
         OkHttpClient client = new OkHttpClient();
-        String url = API_URL+queryIa; 
+        String url = "https://api.themoviedb.org/3"+queryIa; 
         System.out.println("Consulta IA: " + url);
 
         Request request = new Request.Builder()

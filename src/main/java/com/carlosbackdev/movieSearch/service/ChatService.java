@@ -86,7 +86,7 @@ public String getChatbotResponse(Long userId, String userPhrase) {
                 + "- **Géneros:** Si la frase menciona géneros (acción, comedia, terror, etc.), conviértelos en el parámetro 'with_genres' usando los IDs de TMDB.\n"
                 + "- **Año:** Si la frase menciona un año o rango (ej. 'películas de 1995' o 'cine de los 80'), agrégalo con 'year'.\n"
                 + "- **País:** Si la frase menciona un país de origen ('películas francesas'), usa 'region'.\n"
-                + "- **Palabras clave:** Si hay términos como 'viajes en el tiempo', 'robots', 'inteligencia artificial', agrégalo en 'with_keywords'.\n"
+                + "- **Palabras clave:** Si hay términos como 'viajes en el tiempo', 'robots', 'inteligencia artificial', cualquiera agrégalo en 'with_keywords'.\n"
                 + "- **Películas específicas:** Si la frase menciona una película exacta ('quiero ver Interstellar'), usa 'search/movie' con 'query'.\n"
                 + "- **Idioma:** Asegura que el idioma sea español con 'language=es-ES'.\n"
                 + "- **Orden:** Si la frase incluye palabras como 'mejor valoradas', 'populares' o 'recientes', usa los parámetros 'sort_by' adecuados:\n"
@@ -98,14 +98,14 @@ public String getChatbotResponse(Long userId, String userPhrase) {
                 + "- Entrada: \"Quiero ver una película de terror de los 90\"\n"
                 + "  → Respuesta: discover/movie?api_key=API_KEY&with_genres=27&year=1990&language=es-ES\n"
                 + "- Entrada: \"Películas francesas de drama\"\n"
-                + "  → Respuesta: discover/movie?api_key=API_KEY&with_genres=18&region=FR&language=es-ES\n"
+                + "  → Respuesta: /discover/movie?api_key=API_KEY&with_genres=18&region=FR&language=es-ES\n"
                 + "- Entrada: \"Quiero ver Interstellar\"\n"
-                + "  → Respuesta: search/movie?api_key=API_KEY&query=Interstellar&language=es-ES\n"
+                + "  → Respuesta: /search/movie?api_key=API_KEY&query=Interstellar&language=es-ES\n"
                 + "- Entrada: \"Mejor película de ciencia ficción\"\n"
-                + "  → Respuesta: discover/movie?api_key=API_KEY&with_genres=878&sort_by=vote_average.desc&vote_count.gte=1000&language=es-ES\n\n"
+                + "  → Respuesta: /discover/movie?api_key=API_KEY&with_genres=878&sort_by=vote_average.desc&vote_count.gte=1000&language=es-ES\n\n"
 
                 + "Si la frase es demasiado ambigua o no contiene información clara, responde con:\n"
-                + "discover/movie?api_key=API_KEY&language=es-ES.\n"
+                + "/discover/movie?api_key=API_KEY&language=es-ES.\n"
                 + "No agregues explicaciones, solo responde con la URL generada.";
 
         // Cuerpo de la petición para OpenAI
