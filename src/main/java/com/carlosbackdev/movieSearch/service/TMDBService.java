@@ -115,7 +115,7 @@ public class TMDBService {
 
     public Object fetchMovies(String phrase, List<String> genreIds, List<String> properNames, List<Integer> year, List<String> keywords, List<String> country, String media) {
         
-        if(genreIds.size()>3 || keywords.size()>20 || phrase.length()>100){
+        if(genreIds.size()>2 || keywords.size()>10 || phrase.length()>50){
             String queryIa=chatService.getNewQuery(phrase);
                 return fetchMoviesWithIA(queryIa);
         }
@@ -150,7 +150,7 @@ public class TMDBService {
                 return fetchMoviesWithIA(queryIa);
             }
 
-            int totalPages = Math.min((int) resultMap.get("total_pages"), 20); // Máximo 20 páginas
+            int totalPages = Math.min((int) resultMap.get("total_pages"), 30); // Máximo 20 páginas
             int randomPage = (int) (Math.random() * totalPages) + 1;
             String randomPageUrl = API_URL + query + "&page=" + randomPage + "&language=es-ES";
             System.out.println("Consulta con página aleatoria: " + randomPageUrl);
