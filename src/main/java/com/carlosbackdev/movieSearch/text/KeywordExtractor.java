@@ -24,7 +24,7 @@ public class KeywordExtractor {
         "watch","recomended","then","recommend","recommends","down","left","rigth",
         "them","say","give","cacth","will","myself","something","anything","some","someone","lot",
         "ecommend","ecommends","feel","today","tomorrow","movie","movies","tv","series","serie",
-        "not","tvs","film","films","shows","show"
+        "not","tvs","film","films","shows","show","pass"
     ));
 
     public List<String> extractKeywords(String phrase) {
