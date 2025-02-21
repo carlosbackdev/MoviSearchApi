@@ -23,7 +23,8 @@ public class KeywordExtractor {
         "best", "worst", "better", "worse", "great", "top", "low", "high", "favorite",
         "watch","recomended","then","recommend","recommends","down","left","rigth",
         "them","say","give","cacth","will","myself","something","anything","some","someone","lot",
-        "ecommend","ecommends","feel","today","tomorrow"
+        "ecommend","ecommends","feel","today","tomorrow","movie","movies","tv","series","serie",
+        "not","tvs","film","films","shows","show"
     ));
 
     public List<String> extractKeywords(String phrase) {

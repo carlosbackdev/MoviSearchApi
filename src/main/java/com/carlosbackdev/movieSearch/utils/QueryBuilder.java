@@ -13,7 +13,7 @@ public class QueryBuilder {
         
         StringBuilder queryBuilder = new StringBuilder("discover/"+ media +"?api_key=" + API_KEY);
         
-        queryBuilder.append("&vote_average.gte=5");
+   
         
         if (!genreIds.isEmpty()) {
             queryBuilder.append("&with_genres=").append(String.join(",", genreIds));

@@ -43,7 +43,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+    <dependency>
+                      <groupId>org.languagetool</groupId>
+                      <artifactId>languagetool-core</artifactId>
+                      <version>6.5</version>
+                      <type>jar</type>
+                  </dependency>
+                  <dependency>
+                      <groupId>org.languagetool</groupId>
+                      <artifactId>language-es</artifactId>
+                      <version>6.5</version>
+                      <type>jar</type>
+                  </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

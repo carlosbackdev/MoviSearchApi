@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.json.JSONObject;
 
 @Service
 public class TextProcessingService {
@@ -35,8 +36,11 @@ public class TextProcessingService {
         throw new IllegalArgumentException("La frase no puede estar vacía");
     }
         // Paso 1: Corregir ortografía de momento no puede consumir mucho
-//        String correctedPhrase = textAnalysisUtils.correctSpelling(phrase);
-//        System.out.println( "frase "+correctedPhrase);
+        String correctedPhrase = textAnalysisUtils.correctSpelling(phrase);
+        JSONObject jsonObject = new JSONObject(correctedPhrase);
+        String correctedText = jsonObject.getString("Parase");
+        correctedText = correctedText.replaceAll("^\"|\"$", "");
+
 //        
           // Paso 2: traducir frase corregida
 //         String translatedPhrase = null;
@@ -55,18 +59,24 @@ public class TextProcessingService {
             e.printStackTrace();
         }
         String phraseEnglishMinus=phraseEnglish.toLowerCase();
-        System.out.println("frase ingles: " + phraseEnglish);
         
         // Paso 3: Extraer palabras clave
         List<String> keywords = textAnalysisUtils.extractKeywords(phraseEnglishMinus);
-              System.out.println("Keywords con generos" + keywords);
               
         // Paso 4: Extraer nombres propios solo con capazitador pues consumemucho nlp ademas al traducirla vienen ya capitalizas
-        List<String> properNames = textAnalysisUtils.extractProperNames(phraseEnglish);
+        List<String> properNames = textAnalysisUtils.extractProperNames(correctedText);
         
-        //depurar palabra clave quitando nombres de esta
-        keywords.removeIf(properNames::contains);
-        
+        // Convertir los nombres propios a minúsculas para hacer una comparación insensible a las mayúsculas
+        List<String> lowerCaseProperNames = properNames.stream()
+            .map(String::toLowerCase)  // Convertir todos los nombres propios a minúsculas
+            .collect(Collectors.toList());
+
+        // Depurar la lista de palabras clave
+        keywords.removeIf(keyword -> lowerCaseProperNames.contains(keyword.toLowerCase()));
+
+        // Imprimir las palabras clave depuradas
+        System.out.println("Keywords después de quitar nombres propios: " + keywords);
+
         //Paso 5: Ver el media tipo (tv,movie)
         String media = textAnalysisUtils.determineMediaType(keywords);
         keywords = textAnalysisUtils.filterKeywords(keywords, media);
