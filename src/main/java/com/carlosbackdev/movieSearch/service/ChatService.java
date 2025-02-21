@@ -111,7 +111,7 @@ public String getChatbotResponse(Long userId, String userPhrase) {
         // Cuerpo de la petición para OpenAI
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", "gpt-3.5-turbo");
-        requestBody.put("max_tokens", 100);
+        requestBody.put("max_tokens", 200);
         requestBody.put("messages", List.of(
                 Map.of("role", "system", "content", "Eres un asistente especializado en construir consultas para la API de TMDB."),
                 Map.of("role", "user", "content", prompt)
