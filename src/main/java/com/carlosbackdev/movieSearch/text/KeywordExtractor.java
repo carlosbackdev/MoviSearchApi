@@ -23,7 +23,7 @@ public class KeywordExtractor {
         "best", "worst", "better", "worse", "great", "top", "low", "high", "favorite",
         "watch","recomended","then","recommend","recommends","down","left","rigth",
         "them","say","give","cacth","will","myself","something","anything","some","someone","lot",
-        "ecommend","ecommends","feel","today","tomorrow","movie","movies","tv","series","serie",
+        "ecommend","ecommends","feel","today","tomorrow","tell","tells","says","give",
         "not","tvs","film","films","shows","show","pass"
     ));
 
