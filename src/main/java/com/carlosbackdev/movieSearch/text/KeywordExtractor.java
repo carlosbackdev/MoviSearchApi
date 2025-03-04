@@ -25,6 +25,7 @@ public class KeywordExtractor {
         "them","say","give","cacth","will","myself","something","anything","some","someone","lot",
         "ecommend","ecommends","feel","today","tomorrow","tell","tells","says","give",
         "not","tvs","film","films","shows","show","pass","today","watch","watchs","off","says","why","yes"
+        "see","seen","saw"
     ));
 
     public List<String> extractKeywords(String phrase) {
